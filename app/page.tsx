@@ -1,15 +1,11 @@
-// Import the specific sections that make up YOUR landing page
-import { HeroSection } from "@/components/landing/HeroSection";
-import { MetricsSection } from "@/components/landing/MetricsSection";
-import { HowItWorksSection } from "@/components/landing/HowItWorksSection";
-import { TestimonialsSection } from "@/components/landing/TestimonialsSection";
-import { CtaSection } from "@/components/landing/CtaSection";
+import HeroSection from "@/components/landing/HeroSection";
+import MetricsSection from "@/components/landing/MetricsSection";
+import HowItWorksSection from "@/components/landing/HowItWorksSection";
+import TestimonialsSection from "@/components/landing/TestimonialsSection";
+import CtaSection from "@/components/landing/CtaSection";
 
-// This is the main component for the homepage URL ("/")
 export default function HomePage() {
   return (
-    // You can use a fragment <> or just return the components directly.
-    // The <main> tag is already in layout.tsx, so you don't need it here.
     <>
       <HeroSection />
       <MetricsSection />
