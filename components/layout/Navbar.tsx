@@ -36,10 +36,10 @@ export default function Navbar() {
 
           <div className="flex items-center space-x-4">
             <Button variant="ghost" asChild>
-              <Link href="/signin">Sign In</Link>
+              <Link href="/Login">Sign In</Link>
             </Button>
             <Button asChild>
-              <Link href="/signup">Get Started</Link>
+              <Link href="/Signup">Get Started</Link>
             </Button>
           </div>
         </div>
