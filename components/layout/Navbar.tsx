@@ -1,46 +1,89 @@
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import Image from "next/image"; // For your logo
+import { Music } from "lucide-react";
 
-export const Navbar = () => {
+export default function Navbar() {
   return (
-    <header className="py-4 px-6 md:px-12 flex justify-between items-center bg-gray-900 bg-opacity-80 backdrop-blur-sm sticky top-0 z-50">
-      <Link href="/" className="flex items-center gap-2">
-        {/* Replace with your actual logo */}
-        {/* <Image src="/hamonix-logo.svg" alt="Hamonix Logo" width={30} height={30} /> */}
-        <span className="text-xl font-bold text-white">Hamonix</span>
-      </Link>
-      <nav className="hidden md:flex items-center gap-6">
-        <Link
-          href="/#features"
-          className="text-gray-300 hover:text-white transition-colors"
-        >
-          Features
-        </Link>
-        <Link
-          href="/#testimonials"
-          className="text-gray-300 hover:text-white transition-colors"
-        >
-          Testimonials
-        </Link>
-        <Link
-          href="/pricing"
-          className="text-gray-300 hover:text-white transition-colors"
-        >
-          Pricing
-        </Link>
-      </nav>
-      <div className="flex items-center gap-4">
-        <Link
-          href="/login"
-          className="text-gray-300 hover:text-white transition-colors text-sm"
-        >
-          Sign In
-        </Link>
-        <Button asChild>
-          <Link href="/signup">Start Creating Free</Link>
-        </Button>
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16">
+          {/* Logo */}
+          <Link href="/" className="flex items-center gap-2 group">
+            <div className="bg-primary rounded-lg p-2 group-hover:scale-105 transition-transform">
+              <Music className="w-5 h-5 text-primary-foreground" />
+            </div>
+            <span className="text-xl font-bold text-foreground">
+              VocalStudio
+            </span>
+          </Link>
+
+          {/* Navigation Links */}
+          <div className="hidden md:flex items-center gap-8">
+            <Link
+              href="#home"
+              className="text-foreground hover:text-primary transition-colors font-medium"
+            >
+              Home
+            </Link>
+            <Link
+              href="#features"
+              className="text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Features
+            </Link>
+            <Link
+              href="#pricing"
+              className="text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Pricing
+            </Link>
+            <Link
+              href="#about"
+              className="text-muted-foreground hover:text-foreground transition-colors"
+            >
+              About
+            </Link>
+            <Link
+              href="#contact"
+              className="text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Contact
+            </Link>
+          </div>
+
+          {/* CTA Buttons */}
+          <div className="flex items-center gap-4">
+            <Link
+              href="/signin"
+              className="hidden sm:inline-flex text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Sign In
+            </Link>
+            <Link
+              href="/get-started"
+              className="bg-primary text-primary-foreground px-6 py-2 rounded-lg font-semibold hover:opacity-90 transition-opacity"
+            >
+              Get Started
+            </Link>
+          </div>
+
+          {/* Mobile Menu Button */}
+          <button className="md:hidden p-2 text-foreground hover:text-primary transition-colors">
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4 6h16M4 12h16M4 18h16"
+              />
+            </svg>
+          </button>
+        </div>
       </div>
-    </header>
+    </nav>
   );
-};
+}
