@@ -3,65 +3,155 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { createClient } from "@supabase/supabase-js";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
+interface SignUpFormData {
+  firstName: string;
+  lastName: string;
+  artistName: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  agreedToTerms: boolean;
+}
+
 export function SignUpForm() {
   const router = useRouter();
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [artistName, setArtistName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const [formData, setFormData] = useState<SignUpFormData>({
+    firstName: "",
+    lastName: "",
+    artistName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    agreedToTerms: false,
+  });
 
   const [error, setError] = useState<string | null>(null);
-  const [message, setMessage] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const updateFormData = (field: keyof SignUpFormData, value: string | boolean) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const validateForm = (): boolean => {
+    if (!formData.firstName.trim()) {
+      setError("First name is required.");
+      return false;
+    }
+    if (!formData.lastName.trim()) {
+      setError("Last name is required.");
+      return false;
+    }
+    if (!formData.artistName.trim()) {
+      setError("Artist name is required.");
+      return false;
+    }
+    if (!formData.email.trim()) {
+      setError("Email is required.");
+      return false;
+    }
+    if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      setError("Please enter a valid email address.");
+      return false;
+    }
+    if (!formData.password) {
+      setError("Password is required.");
+      return false;
+    }
+    if (formData.password.length < 6) {
+      setError("Password must be at least 6 characters long.");
+      return false;
+    }
+    if (formData.password !== formData.confirmPassword) {
+      setError("Passwords do not match.");
+      return false;
+    }
+    if (!formData.agreedToTerms) {
+      setError("You must agree to the Terms of Service and Privacy Policy.");
+      return false;
+    }
+    return true;
+  };
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-    setMessage(null);
+    setIsLoading(true);
 
-    if (password !== confirmPassword) {
-      setError("Passwords do not match.");
+    if (!validateForm()) {
+      setIsLoading(false);
       return;
     }
 
-    if (!agreedToTerms) {
-      setError("You must agree to the Terms of Service and Privacy Policy.");
-      return;
-    }
+    try {
+      const supabase = createClientComponentClient();
 
-    const supabase = createClient();
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        // You can store additional user metadata here
-        data: {
-          first_name: firstName,
-          last_name: lastName,
-          artist_name: artistName,
+      // Step 1: Create auth user
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email: formData.email,
+        password: formData.password,
+        options: {
+          data: {
+            first_name: formData.firstName,
+            last_name: formData.lastName,
+            artist_name: formData.artistName,
+          },
         },
-      },
-    });
+      });
 
-    if (error) {
-      setError(error.message);
-    } else if (data.user && data.user.identities?.length === 0) {
-      // Handle the case where email confirmation is required but the user already exists
-      setError("This email is already in use. Please try signing in.");
-    } else {
-      // Show a success message to the user
-      setMessage("Success! Please check your email to confirm your account.");
-      // Optional: Redirect after a delay or let them stay on the page
-      // setTimeout(() => router.push('/login'), 5000);
+      if (authError) throw authError;
+
+      if (authData.user) {
+        console.log('User created:', authData.user.id);
+        
+        // Step 2: Insert into profiles table
+        const { data: profileData, error: profileError } = await supabase
+          .from('profiles')
+          .insert({
+            id: authData.user.id,
+            first_name: formData.firstName,
+            last_name: formData.lastName,
+            artist_name: formData.artistName,
+            email: formData.email,
+          })
+          .select();
+
+        if (profileError) {
+          console.log('Profile error details:', profileError);
+          throw new Error(`Profile creation failed: ${profileError.message}`);
+        }
+
+        console.log('Profile created:', profileData);
+
+        // Step 3: Auto login
+        const { error: signInError } = await supabase.auth.signInWithPassword({
+          email: formData.email,
+          password: formData.password,
+        });
+
+        if (signInError) {
+          console.log('Auto login failed, but account created');
+        }
+
+        // Step 4: Redirect to dashboard
+        router.push('/dashboard');
+        router.refresh();
+
+      } else {
+        throw new Error('User creation failed');
+      }
+
+    } catch (error: any) {
+      console.error('Complete error:', error);
+      setError(error.message || "An error occurred during sign up.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -72,7 +162,7 @@ export function SignUpForm() {
           <TabsTrigger value="signin" asChild>
             <Link href="/Login">Sign In</Link>
           </TabsTrigger>
-          <TabsTrigger value="signup">Sign Up</TabsTrigger>
+          <TabsTrigger value="Signup">Sign Up</TabsTrigger>
         </TabsList>
       </Tabs>
 
@@ -83,9 +173,10 @@ export function SignUpForm() {
             <Input
               id="first-name"
               placeholder="John"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
+              value={formData.firstName}
+              onChange={(e) => updateFormData('firstName', e.target.value)}
               required
+              disabled={isLoading}
             />
           </div>
           <div>
@@ -93,9 +184,10 @@ export function SignUpForm() {
             <Input
               id="last-name"
               placeholder="Doe"
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
+              value={formData.lastName}
+              onChange={(e) => updateFormData('lastName', e.target.value)}
               required
+              disabled={isLoading}
             />
           </div>
         </div>
@@ -104,9 +196,10 @@ export function SignUpForm() {
           <Input
             id="artist-name"
             placeholder="Your stage name"
-            value={artistName}
-            onChange={(e) => setArtistName(e.target.value)}
+            value={formData.artistName}
+            onChange={(e) => updateFormData('artistName', e.target.value)}
             required
+            disabled={isLoading}
           />
         </div>
         <div>
@@ -115,9 +208,10 @@ export function SignUpForm() {
             id="email"
             type="email"
             placeholder="artist@example.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={formData.email}
+            onChange={(e) => updateFormData('email', e.target.value)}
             required
+            disabled={isLoading}
           />
         </div>
         <div>
@@ -126,9 +220,10 @@ export function SignUpForm() {
             id="password"
             type="password"
             placeholder="Enter your password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            value={formData.password}
+            onChange={(e) => updateFormData('password', e.target.value)}
             required
+            disabled={isLoading}
           />
         </div>
         <div>
@@ -137,17 +232,19 @@ export function SignUpForm() {
             id="confirm-password"
             type="password"
             placeholder="Confirm your password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
+            value={formData.confirmPassword}
+            onChange={(e) => updateFormData('confirmPassword', e.target.value)}
             required
+            disabled={isLoading}
           />
         </div>
 
         <div className="flex items-start space-x-2">
           <Checkbox
             id="terms"
-            checked={agreedToTerms}
-            onCheckedChange={(checked) => setAgreedToTerms(Boolean(checked))}
+            checked={formData.agreedToTerms}
+            onCheckedChange={(checked) => updateFormData('agreedToTerms', Boolean(checked))}
+            disabled={isLoading}
           />
           <div className="grid gap-1.5 leading-none">
             <label
@@ -168,14 +265,17 @@ export function SignUpForm() {
         </div>
 
         {error && <p className="text-sm text-red-500">{error}</p>}
-        {message && <p className="text-sm text-green-500">{message}</p>}
 
-        <Button type="submit" className="w-full" size="lg">
-          Create Account
+        <Button 
+          type="submit" 
+          className="w-full" 
+          size="lg"
+          disabled={isLoading}
+        >
+          {isLoading ? "Creating Account..." : "Create Account"}
         </Button>
       </form>
 
-      {/* Social Logins and Footer Link */}
       <div className="relative my-4">
         <div className="absolute inset-0 flex items-center">
           <span className="w-full border-t border-gray-700" />
@@ -188,10 +288,10 @@ export function SignUpForm() {
       </div>
 
       <div className="grid grid-cols-2 gap-4">
-        <Button variant="outline" className="w-full">
+        <Button variant="outline" className="w-full" disabled={isLoading}>
           Google
         </Button>
-        <Button variant="outline" className="w-full">
+        <Button variant="outline" className="w-full" disabled={isLoading}>
           Apple
         </Button>
       </div>
@@ -199,7 +299,7 @@ export function SignUpForm() {
       <p className="text-center text-sm text-gray-400">
         Already have an account?{" "}
         <Link
-          href="/Login"
+          href="/login"
           className="font-semibold text-yellow-400 hover:underline"
         >
           Sign in

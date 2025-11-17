@@ -1,12 +1,9 @@
-import { redirect } from "next/navigation";
-
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Plus, Info } from "lucide-react";
 import { SongCard } from "@/components/dashboard/SongCard";
-import { createClient } from "@/lib/supabase/client";
+import { getUserProfile } from "@/app/actions/user-actions";
 
-// Dummy data for development when not logged in
 const dummySongs = [
   {
     id: "1",
@@ -47,37 +44,49 @@ const dummySongs = [
 ];
 
 export default async function DashboardPage() {
-  const supabase = createClient();
+  // Just get profile without redirecting
+  const profile = await getUserProfile();
 
-  // --- TEMPORARILY DISABLED AUTH ---
-  // const { data: { user } } = await supabase.auth.getUser();
-  // if (!user) {
-  //   // For now, we won't redirect. We'll show dummy data instead.
-  //   // return redirect('/login');
-  // }
-  // --------------------------------
-
-  // Since we are not logged in, we will use dummy data to build the UI.
-  // In a real scenario, you would still fetch data here.
-  // const { data: songs, error } = await supabase
-  //   .from('songs')
-  //   .select('*')
-  //   .eq('user_id', user.id)
-  //   .order('created_at', { ascending: false });
-
-  // Use dummy data for now
   const songs = dummySongs;
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-4xl font-bold">Your Studio</h1>
-        <Button asChild size="lg">
-  <Link href="/create-song">
-    <Plus className="mr-2 h-5 w-5" />
-    Create New Song
-  </Link>
-</Button>
+      <div className="mb-8">
+        <div className="flex justify-between items-start mb-6">
+          <div>
+            <h1 className="text-4xl font-bold">Your Studio</h1>
+            <p className="text-gray-400 mt-2">
+              Welcome back, <span className="text-yellow-400 font-semibold">{profile.artist_name}</span>!
+            </p>
+          </div>
+          <Button asChild size="lg">
+            <Link href="/create-song">
+              <Plus className="mr-2 h-5 w-5" />
+              Create New Song
+            </Link>
+          </Button>
+        </div>
+        
+        <div className="bg-gray-800 rounded-lg p-4 mb-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+            <div>
+              <p className="text-gray-400">Artist Name</p>
+              <p className="font-semibold">{profile.artist_name}</p>
+            </div>
+            <div>
+              <p className="text-gray-400">Email</p>
+              <p className="font-semibold">{profile.email}</p>
+            </div>
+            <div>
+              <p className="text-gray-400">First Name</p>
+              <p className="font-semibold">{profile.first_name}</p>
+            </div>
+            <div>
+              <p className="text-gray-400">Last Name</p>
+              <p className="font-semibold">{profile.last_name}</p>
+            </div>
+          </div>
+        </div>
       </div>
 
       {songs && songs.length > 0 ? (
@@ -89,7 +98,7 @@ export default async function DashboardPage() {
                 id: song.id,
                 title: song.title,
                 artist_name: song.artist_name,
-                status: song.status as any, // Cast status to 'any' for dummy data
+                status: song.status as any,
               }}
             />
           ))}
