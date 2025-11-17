@@ -1,39 +1,27 @@
-import type { Config } from 'tailwindcss';
+import type { Config } from 'tailwindcss'
 
 const config: Config = {
   content: [
-    './app/**/*.{js,ts,jsx,tsx,mdx}',
+    './pages/**/*.{js,ts,jsx,tsx,mdx}',
     './components/**/*.{js,ts,jsx,tsx,mdx}',
+    './app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
     extend: {
       colors: {
-        'brand-primary': '#F59E0B',
-        'brand-primary-hover': '#EAAE0B',
-        'brand-dark': '#111827',
-        'brand-dark-secondary': '#1F2937',
-        'brand-light-gray': '#374151',
-        'brand-blue': '#3B82F6',
-        'brand-gray': '#2D3748',
-        'brand-text': '#F3F4F6',
-      },
-      backgroundColor: {
-        'brand-dark': '#111827',
-        'brand-dark-secondary': '#1F2937',
-        'brand-primary': '#F59E0B',
-        'brand-gray': '#2D3748',
-      },
-      textColor: {
-        'brand-primary': '#F59E0B',
-        'brand-text': '#F3F4F6',
-      },
-      borderColor: {
-        'brand-light-gray': '#374151',
-        'brand-blue': '#3B82F6',
+        background: '#0a0e27',
+        foreground: '#ffffff',
+        primary: {
+          DEFAULT: '#fbbf24',
+          dark: '#f59e0b',
+        },
+        card: {
+          DEFAULT: '#1a1f3a',
+          border: '#2d3554',
+        },
       },
     },
   },
   plugins: [],
-};
-
-export default config;
+}
+export default config

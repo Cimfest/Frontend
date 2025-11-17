@@ -1,23 +1,25 @@
+import Link from 'next/link'
 
-import React from 'react';
-import Button from '../ui/Button';
-
-const CtaSection: React.FC = () => {
+export default function CtaSection() {
   return (
-    <section className="py-24 md:py-32 bg-brand-dark">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-brand-primary text-brand-dark text-center py-20 px-8 rounded-lg shadow-2xl">
-          <h2 className="text-5xl md:text-5xl font-bold">Ready to Create Your Next Hit?</h2>
-          <p className="mt-6 max-w-3xl mx-auto text-xl font-light leading-relaxed">
-            Join thousands of artists who are already creating professional music with AI. Start your journey today.
+    <section className="py-20 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto">
+        <div className="bg-gradient-to-r from-[#fbbf24] to-[#f59e0b] rounded-3xl p-12 md:p-16 text-center">
+          <h2 className="text-4xl md:text-5xl font-bold text-[#0a0e27] mb-6">
+            Ready to Create Your Next Hit?
+          </h2>
+          <p className="text-lg md:text-xl text-[#0a0e27]/80 mb-8 max-w-2xl mx-auto">
+            Join thousands of artists who are already creating professional music with AI. 
+            Start your journey today.
           </p>
-          <div className="mt-10">
-            <Button variant="secondary" className="px-10 py-4 text-lg font-bold">Start Creating Now</Button>
-          </div>
+          <Link
+            href="/create"
+            className="inline-block px-8 py-4 bg-[#0a0e27] hover:bg-[#0f1229] text-white font-semibold rounded-lg transition-colors text-lg"
+          >
+            Start Creating Now
+          </Link>
         </div>
       </div>
     </section>
-  );
-};
-
-export default CtaSection;
+  )
+}
