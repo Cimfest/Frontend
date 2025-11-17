@@ -13,16 +13,14 @@ export const metadata: Metadata = {
   },
   description:
     "AI-powered music export for Cameroonian artists. Go from raw vocals to a globally distributed track on Spotify and Apple Music in minutes, completely free.",
-
   openGraph: {
     title: "Hamonix - Turn Your Voice Into Studio-Quality Music",
     description: "The complete music export pipeline for Cameroonian artists.",
-    url: "https://hamonix.com",
+    url: "https://hamonix.com", // Replace with your actual domain
     siteName: "Hamonix",
-
     images: [
       {
-        url: "https://hamonix.com/og-image.png",
+        url: "https://hamonix.com/og-image.png", // Replace with your actual social image URL
         width: 1200,
         height: 630,
       },
@@ -30,27 +28,41 @@ export const metadata: Metadata = {
     locale: "en_US",
     type: "website",
   },
-
   twitter: {
     card: "summary_large_image",
     title: "Hamonix - Turn Your Voice Into Studio-Quality Music",
     description: "The complete music export pipeline for Cameroonian artists.",
-    images: ["https://hamonix.com/og-image.png"],
+    images: ["https://hamonix.com/og-image.png"], // Replace with your actual social image URL
   },
 };
 
+// This is the RootLayout component that wraps all non-auth pages
 export default function RootLayout({
   children,
+  auth,
 }: Readonly<{
   children: React.ReactNode;
+  auth?: React.ReactNode;
 }>) {
+  // If auth slot is being used, render auth pages without navbar and footer
+  if (auth) {
+    return (
+      <html lang="en">
+        <body className={`${inter.className} bg-gray-950 text-white`}>
+          {auth}
+        </body>
+      </html>
+    );
+  }
+
   return (
     <html lang="en">
-      <body className={inter.className}>
-        <Navbar />
-        {/* The <main> tag wraps the primary content of the page */}
-        <main className="flex-grow">{children}</main>
-        <Footer />
+      <body className={`${inter.className} bg-gray-950 text-white`}>
+        <div className="flex flex-col min-h-screen">
+          <Navbar />
+          <main className="flex-grow">{children}</main>
+          <Footer />
+        </div>
       </body>
     </html>
   );
