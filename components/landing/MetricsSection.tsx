@@ -3,22 +3,22 @@ export default function MetricsSection() {
     {
       value: '10,000+',
       label: 'Active Artists',
-      color: 'text-[#fbbf24]'
+      color: 'text-primary'
     },
     {
       value: '50,000+',
       label: 'Tracks Created',
-      color: 'text-green-400'
+      color: 'text-chart-2'
     },
     {
       value: '45+',
       label: 'Countries',
-      color: 'text-red-400'
+      color: 'text-chart-3'
     },
     {
       value: '98%',
       label: 'Satisfaction',
-      color: 'text-[#fbbf24]'
+      color: 'text-primary'
     }
   ]
 
@@ -31,7 +31,7 @@ export default function MetricsSection() {
               <div className={`text-4xl md:text-5xl font-bold ${metric.color} mb-2`}>
                 {metric.value}
               </div>
-              <div className="text-gray-400 text-sm md:text-base">
+              <div className="text-muted-foreground text-sm md:text-base">
                 {metric.label}
               </div>
             </div>
