@@ -1,89 +1,57 @@
-import Link from "next/link";
-import { Music } from "lucide-react";
+'use client'
+
+import Link from 'next/link'
+import { Mic2 } from 'lucide-react'
 
 export default function Navbar() {
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
+    <nav className="fixed top-0 w-full z-50 bg-[#0a0e27]/95 backdrop-blur-sm border-b border-[#2d3554]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 group">
-            <div className="bg-primary rounded-lg p-2 group-hover:scale-105 transition-transform">
-              <Music className="w-5 h-5 text-primary-foreground" />
+          <Link href="/" className="flex items-center space-x-2">
+            <div className="w-8 h-8 bg-[#fbbf24] rounded-lg flex items-center justify-center">
+              <Mic2 className="w-5 h-5 text-[#0a0e27]" />
             </div>
-            <span className="text-xl font-bold text-foreground">
-              VocalStudio
-            </span>
+            <span className="text-xl font-bold text-white">VocalStudio</span>
           </Link>
 
           {/* Navigation Links */}
-          <div className="hidden md:flex items-center gap-8">
-            <Link
-              href="#home"
-              className="text-foreground hover:text-primary transition-colors font-medium"
-            >
-              Home
+          <div className="hidden md:flex items-center space-x-8">
+            <Link href="#how-it-works" className="text-gray-300 hover:text-white transition-colors">
+              How It Works
             </Link>
-            <Link
-              href="#features"
-              className="text-muted-foreground hover:text-foreground transition-colors"
-            >
+            <Link href="#features" className="text-gray-300 hover:text-white transition-colors">
               Features
             </Link>
-            <Link
-              href="#pricing"
-              className="text-muted-foreground hover:text-foreground transition-colors"
-            >
+            <Link href="#pricing" className="text-gray-300 hover:text-white transition-colors">
               Pricing
             </Link>
-            <Link
-              href="#about"
-              className="text-muted-foreground hover:text-foreground transition-colors"
-            >
+            <Link href="#about" className="text-gray-300 hover:text-white transition-colors">
               About
             </Link>
-            <Link
-              href="#contact"
-              className="text-muted-foreground hover:text-foreground transition-colors"
-            >
+            <Link href="#contact" className="text-gray-300 hover:text-white transition-colors">
               Contact
             </Link>
           </div>
 
           {/* CTA Buttons */}
-          <div className="flex items-center gap-4">
-            <Link
-              href="/signin"
-              className="hidden sm:inline-flex text-muted-foreground hover:text-foreground transition-colors"
+          <div className="flex items-center space-x-4">
+            <Link 
+              href="/signin" 
+              className="text-gray-300 hover:text-white transition-colors"
             >
               Sign In
             </Link>
-            <Link
-              href="/get-started"
-              className="bg-primary text-primary-foreground px-6 py-2 rounded-lg font-semibold hover:opacity-90 transition-opacity"
+            <Link 
+              href="/signup" 
+              className="px-6 py-2 bg-[#fbbf24] hover:bg-[#f59e0b] text-[#0a0e27] font-semibold rounded-lg transition-colors"
             >
               Get Started
             </Link>
           </div>
-
-          {/* Mobile Menu Button */}
-          <button className="md:hidden p-2 text-foreground hover:text-primary transition-colors">
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 6h16M4 12h16M4 18h16"
-              />
-            </svg>
-          </button>
         </div>
       </div>
     </nav>
-  );
+  )
 }
