@@ -73,11 +73,11 @@ export default async function DashboardPage() {
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-4xl font-bold">Your Studio</h1>
         <Button asChild size="lg">
-  <Link href="/create-song">
-    <Plus className="mr-2 h-5 w-5" />
-    Create New Song
-  </Link>
-</Button>
+          <Link href="/create-song">
+            <Plus className="mr-2 h-5 w-5" />
+            Create New Song
+          </Link>
+        </Button>
       </div>
 
       {songs && songs.length > 0 ? (

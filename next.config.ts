@@ -7,7 +7,8 @@ const nextConfig = {
         protocol: "https",
         hostname: "source.unsplash.com",
         port: "",
-        pathname: "/random/**",
+        // Allow all paths on source.unsplash.com (collection/, random/, etc.)
+        pathname: "/**",
       },
       // You can add other domains here in the future
       // For example, if your Supabase storage has a specific URL:
