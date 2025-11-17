@@ -1,86 +1,91 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { v4 as uuidv4 } from "uuid"; // Ensure you've run: npm install uuid @types/uuid
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { Upload } from 'lucide-react'
+} from "@/components/ui/select";
+import { Upload } from "lucide-react";
 
 export function CreateSongDialog() {
-  const router = useRouter()
-  const [open, setOpen] = useState(true)
-  const [songTitle, setSongTitle] = useState('')
-  const [genre, setGenre] = useState('')
-  const [mood, setMood] = useState('')
-  const [file, setFile] = useState<File | null>(null)
-  const [dragActive, setDragActive] = useState(false)
+  const router = useRouter();
+  const [open, setOpen] = useState(true);
+  const [songTitle, setSongTitle] = useState("");
+  const [genre, setGenre] = useState("");
+  const [mood, setMood] = useState("");
+  const [file, setFile] = useState<File | null>(null);
+  const [dragActive, setDragActive] = useState(false);
 
   const handleClose = () => {
-    setOpen(false)
-    // Navigate back to dashboard after closing
-    setTimeout(() => router.push('/dashboard'), 150)
-  }
+    setOpen(false);
+    // This gives the dialog a moment to animate out before navigating
+    setTimeout(() => router.push("/dashboard"), 150);
+  };
 
   const handleDrag = (e: React.DragEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
-    if (e.type === 'dragenter' || e.type === 'dragover') {
-      setDragActive(true)
-    } else if (e.type === 'dragleave') {
-      setDragActive(false)
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === "dragenter" || e.type === "dragover") {
+      setDragActive(true);
+    } else if (e.type === "dragleave") {
+      setDragActive(false);
     }
-  }
+  };
 
   const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
-    setDragActive(false)
-
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      const droppedFile = e.dataTransfer.files[0]
+      const droppedFile = e.dataTransfer.files[0];
       if (
-        droppedFile.type === 'audio/mpeg' ||
-        droppedFile.type === 'audio/wav'
+        droppedFile.type === "audio/mpeg" ||
+        droppedFile.type === "audio/wav"
       ) {
-        setFile(droppedFile)
+        setFile(droppedFile);
       }
     }
-  }
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      setFile(e.target.files[0])
+      setFile(e.target.files[0]);
     }
-  }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    
-    // TODO: Implement actual file upload and song creation logic
-    console.log({
+    e.preventDefault();
+    if (!songTitle || !genre || !mood || !file) return;
+
+    // 1. Generate a unique ID for the new song
+    const newSongId = uuidv4();
+
+    // 2. In a real app, this is where you'd trigger the backend API call
+    console.log("Submitting new track:", {
+      newSongId,
       songTitle,
       genre,
       mood,
       file,
-    })
+    });
 
-    // For now, just close and navigate back
-    handleClose()
-  }
+    // 3. Redirect to the processing page for the new song
+    router.push(`/dashboard/song/${newSongId}`);
+  };
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
@@ -90,30 +95,22 @@ export function CreateSongDialog() {
             Produce a New Track
           </DialogTitle>
         </DialogHeader>
-
         <form onSubmit={handleSubmit} className="space-y-6 mt-4">
-          {/* Song Title */}
           <div className="space-y-2">
             <Label htmlFor="song-title">Song Title</Label>
             <Input
               id="song-title"
-              type="text"
-              placeholder="Enter your song title"
+              placeholder="My next big hit..."
               value={songTitle}
               onChange={(e) => setSongTitle(e.target.value)}
-              className="bg-secondary border-border"
               required
             />
           </div>
-
-          {/* Upload Vocal Track */}
           <div className="space-y-2">
             <Label>Upload Your Vocal Track</Label>
             <div
               className={`relative border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
-                dragActive
-                  ? 'border-primary bg-primary/10'
-                  : 'border-border bg-secondary'
+                dragActive ? "border-primary bg-primary/10" : "border-border"
               }`}
               onDragEnter={handleDrag}
               onDragLeave={handleDrag}
@@ -131,9 +128,7 @@ export function CreateSongDialog() {
               <p className="text-sm text-muted-foreground mb-1">
                 Click to upload or drag and drop
               </p>
-              <p className="text-xs text-primary">
-                .mp3, .wav files only
-              </p>
+              <p className="text-xs text-primary">.mp3, .wav files only</p>
               {file && (
                 <p className="mt-4 text-sm font-medium text-foreground">
                   Selected: {file.name}
@@ -141,55 +136,39 @@ export function CreateSongDialog() {
               )}
             </div>
           </div>
-
-          {/* Genre and Mood */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="genre">Genre</Label>
               <Select value={genre} onValueChange={setGenre} required>
-                <SelectTrigger
-                  id="genre"
-                  className="bg-secondary border-border"
-                >
-                  <SelectValue placeholder="Afrobeats" />
+                <SelectTrigger id="genre">
+                  <SelectValue placeholder="Select genre" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="afrobeats">Afrobeats</SelectItem>
                   <SelectItem value="makossa">Makossa</SelectItem>
                   <SelectItem value="bikutsi">Bikutsi</SelectItem>
-                  <SelectItem value="coupedecale">Coupé-Décalé</SelectItem>
-                  <SelectItem value="hiphop">Hip Hop</SelectItem>
-                  <SelectItem value="rnb">R&B</SelectItem>
                   <SelectItem value="gospel">Gospel</SelectItem>
-                  <SelectItem value="traditional">Traditional</SelectItem>
                 </SelectContent>
               </Select>
             </div>
-
             <div className="space-y-2">
               <Label htmlFor="mood">Mood</Label>
               <Select value={mood} onValueChange={setMood} required>
-                <SelectTrigger id="mood" className="bg-secondary border-border">
-                  <SelectValue placeholder="Energetic" />
+                <SelectTrigger id="mood">
+                  <SelectValue placeholder="Select mood" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="energetic">Energetic</SelectItem>
-                  <SelectItem value="romantic">Romantic</SelectItem>
-                  <SelectItem value="melancholic">Melancholic</SelectItem>
                   <SelectItem value="uplifting">Uplifting</SelectItem>
                   <SelectItem value="chill">Chill</SelectItem>
-                  <SelectItem value="aggressive">Aggressive</SelectItem>
-                  <SelectItem value="peaceful">Peaceful</SelectItem>
                   <SelectItem value="party">Party</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
-
-          {/* Submit Button */}
           <Button
             type="submit"
-            className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
+            className="w-full"
             size="lg"
             disabled={!songTitle || !genre || !mood || !file}
           >
@@ -198,5 +177,5 @@ export function CreateSongDialog() {
         </form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

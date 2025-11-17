@@ -12,8 +12,10 @@ type Song = {
 
 export const SongCard = ({ song }: { song: Song }) => {
   return (
+
     <Link href={`/dashboard/songs/${song.id}`} className="block">
       <div className="bg-gray-800/50 border border-gray-700/80 rounded-lg p-6 hover:bg-gray-800 transition-colors group relative">
+
         <div className="flex justify-between items-start mb-4">
           <div className="flex-1">
             <h3 className="text-xl font-bold text-white">{song.title}</h3>
