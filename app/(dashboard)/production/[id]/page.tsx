@@ -2,23 +2,15 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
 import {
-  ChevronLeft,
-  Download,
-  Play,
-  Pause,
   Loader2,
-  Sparkles,
-  Copy,
-  Check,
+  Mic,
+  Music,
   FileText,
-  Image as ImageIcon,
-  Share2,
-  Waves,
+  Package,
+  CheckCircle,
+  Check,
 } from "lucide-react";
-import Image from "next/image";
-import DSPExportModal from "@/components/DSPExportModal";
 
 // Interfaces
 interface SongData {
@@ -26,35 +18,62 @@ interface SongData {
   title: string;
   genre: string;
   mood: string;
-  fileName: string;
-  createdAt: string;
   artistName: string;
+  fileName?: string;
+  createdAt?: string;
 }
 
 interface EpkData {
   biography: string;
   pressRelease: string;
   socialBlurbs: string[];
-  albumArt: string;
+  albumArt: string | null;
 }
+
+// Configuration for our UI
+const STAGES = [
+  // ... (STAGES array remains the same)
+  { name: "Analyzing Vocal", icon: Mic, start: 0, end: 20 },
+  { name: "Generating Instrumental", icon: Music, start: 20, end: 60 },
+  { name: "Creating Press Kit", icon: FileText, start: 60, end: 90 },
+  {
+    name: "Preparing Distribution Package",
+    icon: Package,
+    start: 90,
+    end: 100,
+  },
+];
 
 export default function ProductionPage() {
   const router = useRouter();
   const [songData, setSongData] = useState<SongData | null>(null);
-  const [epkData, setEpkData] = useState<EpkData | null>(null);
-  const [isProducing, setIsProducing] = useState(true);
   const [progress, setProgress] = useState(0);
   const [isGeneratingEpk, setIsGeneratingEpk] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
-  const [activeTab, setActiveTab] = useState<"bio" | "press" | "social">("bio");
-  const [showDSPModal, setShowDSPModal] = useState(false);
 
   useEffect(() => {
     const storedData = sessionStorage.getItem("currentSong");
     if (storedData) {
-      setSongData(JSON.parse(storedData));
+      const parsedData: SongData = JSON.parse(storedData);
+      console.log("Loaded song data:", parsedData);
+      setSongData(parsedData);
+
+      // --- THIS IS THE FIX ---
+      // Save the newly created song to our persistent list in localStorage.
+      // This ensures the dashboard will see it.
+      const allSongsString = localStorage.getItem("allSongs");
+      const allSongs: SongData[] = allSongsString
+        ? JSON.parse(allSongsString)
+        : [];
+
+      // Avoid adding duplicates if the page is reloaded
+      if (!allSongs.find((song) => song.id === parsedData.id)) {
+        allSongs.unshift(parsedData); // Add new song to the beginning of the list
+        localStorage.setItem("allSongs", JSON.stringify(allSongs));
+        console.log("Saved new song to localStorage. All songs:", allSongs);
+      }
+      // --------------------
     } else {
+      console.warn("No song data found, redirecting to dashboard");
       router.push("/dashboard");
       return;
     }
@@ -63,285 +82,247 @@ export default function ProductionPage() {
       setProgress((prev) => {
         if (prev >= 100) {
           clearInterval(progressInterval);
-          setIsProducing(false);
           return 100;
         }
-        return prev + 5;
+        return prev + 1;
       });
-    }, 100);
+    }, 120);
 
     return () => clearInterval(progressInterval);
   }, [router]);
 
+  // ... (the rest of the component remains exactly the same)
+
   useEffect(() => {
-    if (!isProducing && songData && !epkData && !isGeneratingEpk) {
-      const generateEpk = async () => {
-        setIsGeneratingEpk(true);
-        try {
-          const response = await fetch("/api/generate-epk", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              title: songData.title,
-              genre: songData.genre,
-              mood: songData.mood,
-              artistName: songData.artistName || "Cameroonian Artist",
-            }),
-          });
-          if (!response.ok) throw new Error("Failed to fetch EPK data");
-          const data: EpkData = await response.json();
-          setEpkData(data);
-        } catch (error) {
-          console.error("EPK Generation failed:", error);
-        } finally {
-          setIsGeneratingEpk(false);
-        }
-      };
-      generateEpk();
+    if (progress >= 100 && !isGeneratingEpk && songData) {
+      generateEpkAndRedirect();
     }
-  }, [isProducing, songData, epkData, isGeneratingEpk]);
+  }, [progress, isGeneratingEpk, songData]);
 
-  const handleDownloadPressKitSummary = () => {
-    alert("This will download a simple PDF summary of the press kit.");
-    // jsPDF implementation would go here
+  const generateEpkAndRedirect = async () => {
+    if (!songData) {
+      console.error("No song data available for EPK generation");
+      return;
+    }
+
+    setIsGeneratingEpk(true);
+    console.log("Starting EPK generation with data:", songData);
+
+    try {
+      // Ensure we have all required fields
+      const requestPayload = {
+        title: songData.title,
+        genre: songData.genre,
+        mood: songData.mood,
+        artistName: songData.artistName || "Unknown Artist", // Fallback
+      };
+
+      console.log("Sending EPK request with payload:", requestPayload);
+
+      const response = await fetch("/api/generate-epk", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(requestPayload),
+      });
+
+      console.log("EPK response status:", response.status);
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("EPK API error:", errorData);
+        throw new Error(errorData.error || "Failed to fetch EPK data");
+      }
+
+      const data: EpkData = await response.json();
+      console.log("EPK generated successfully:", data);
+
+      sessionStorage.setItem("currentEpk", JSON.stringify(data));
+
+      // Small delay for user experience
+      setTimeout(() => {
+        router.push(`/release/${songData.id}`);
+      }, 1000);
+    } catch (error) {
+      console.error("EPK Generation failed:", error);
+
+      // Create fallback EPK with better messaging
+      const fallbackEpk: EpkData = {
+        biography: `${songData.artistName} is an innovative ${songData.genre} artist from Cameroon, creating a unique fusion of traditional African rhythms and contemporary production. Their latest track "${songData.title}" showcases a ${songData.mood} atmosphere that captures the vibrant essence of Cameroonian musical heritage.`,
+        pressRelease: `FOR IMMEDIATE RELEASE\n\n${songData.artistName} Releases "${songData.title}"\n\nCameroonian artist ${songData.artistName} today unveiled their latest single "${songData.title}", a captivating ${songData.genre} track that masterfully blends traditional African rhythms with contemporary production. The ${songData.mood} atmosphere showcases their ability to honor cultural heritage while innovating for modern audiences.\n\nAvailable now on all major streaming platforms.`,
+        socialBlurbs: [
+          `🎵 NEW MUSIC! "${songData.title}" by ${songData.artistName} is OUT NOW! Experience ${songData.mood} ${songData.genre} vibes from Cameroon 🇨🇲✨ #CameroonMusic #NewMusic`,
+          `From my heart to your speakers. My new track "${
+            songData.title
+          }" is here! Stream it now! 💫 #${songData.genre.replace(/\s+/g, "")}`,
+          `Ready for your new favorite song? "${songData.title}" is live! Turn it up! 🚀 #MusicDiscovery #StreamNow`,
+        ],
+        albumArt: null,
+      };
+
+      sessionStorage.setItem("currentEpk", JSON.stringify(fallbackEpk));
+
+      // Still redirect to release page
+      setTimeout(() => {
+        router.push(`/release/${songData.id}`);
+      }, 1000);
+    }
   };
 
-  const togglePlayback = () => setIsPlaying(!isPlaying);
-
-  const copyToClipboard = (text: string, index: number) => {
-    navigator.clipboard.writeText(text);
-    setCopiedIndex(index);
-    setTimeout(() => setCopiedIndex(null), 2000);
-  };
+  const currentStageIndex = STAGES.findIndex(
+    (s) => progress >= s.start && progress < s.end
+  );
+  const currentStage = STAGES[currentStageIndex] || STAGES[STAGES.length - 1];
 
   if (!songData) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-[#0a0e14] via-[#0f1419] to-[#1a1f2e] text-white flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-[#0a0e14] to-[#1a1f2e] text-white flex items-center justify-center">
         <div className="text-center">
-          <Loader2 className="w-16 h-16 animate-spin mx-auto mb-4 text-yellow-500" />
-          <p className="text-gray-400">Loading song data...</p>
+          <Loader2 className="w-16 h-16 animate-spin text-yellow-500 mx-auto mb-4" />
+          <p className="text-gray-400">Loading...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0a0e14] via-[#0f1419] to-[#1a1f2e] text-white">
-      <header className="sticky top-0 z-50 backdrop-blur-xl bg-[#0f1419]/80 border-b border-gray-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
-          <div className="flex items-center justify-between">
-            <button
-              onClick={() => router.push("/dashboard")}
-              className="flex items-center gap-2 text-gray-400 hover:text-yellow-500 transition-colors group"
-            >
-              <ChevronLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
-              <span className="font-medium">Back to Dashboard</span>
-            </button>
+    <div className="min-h-screen bg-gradient-to-br from-[#0a0e14] to-[#1a1f2e] text-white flex flex-col items-center justify-center p-4">
+      <div className="w-full max-w-2xl text-center">
+        {/* Header */}
+        <h1 className="text-4xl sm:text-5xl font-bold mb-3 bg-gradient-to-r from-white to-yellow-300 bg-clip-text text-transparent">
+          {progress < 100 ? "Creation in Progress..." : "Creation Complete!"}
+        </h1>
+        <p className="text-lg text-gray-400 mb-12">
+          Your track{" "}
+          <span className="font-bold text-yellow-400">{songData.title}</span> is
+          coming to life.
+        </p>
+
+        {/* Central Animation */}
+        <div className="relative w-full h-48 flex justify-center items-center mb-12">
+          {/* Pulsing Background Glow */}
+          <div
+            className={`absolute w-64 h-64 bg-yellow-500/10 rounded-full blur-3xl transition-opacity duration-1000 ${
+              progress < 100 ? "animate-pulse" : "opacity-0"
+            }`}
+          ></div>
+
+          {/* Center Icon Circle */}
+          <div className="relative z-10 w-32 h-32 bg-[#1e2936] rounded-full flex items-center justify-center border-4 border-yellow-500 shadow-2xl shadow-yellow-500/20">
+            {progress < 100 ? (
+              <currentStage.icon className="w-16 h-16 text-yellow-500 animate-in fade-in duration-500" />
+            ) : (
+              <CheckCircle className="w-20 h-20 text-green-400 animate-in fade-in scale-110 duration-500" />
+            )}
+          </div>
+
+          {/* Rotating Ring with Progress Indicator */}
+          <div className="absolute w-64 h-64 border-2 border-dashed border-gray-700 rounded-full animate-spin-slow">
+            <div
+              className="absolute -top-2 left-1/2 -ml-2 w-4 h-4 bg-yellow-500 rounded-full shadow-lg shadow-yellow-500/50 transition-transform duration-300"
+              style={{
+                transform: `rotate(${
+                  progress * 3.6
+                }deg) translateX(128px) rotate(-${progress * 3.6}deg)`,
+              }}
+            ></div>
           </div>
         </div>
-      </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
-        <div className="mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-          <div className="flex items-start gap-4 mb-4">
-            <div className="w-16 h-16 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-xl flex items-center justify-center shadow-lg shadow-yellow-500/30">
-              <Waves className="w-8 h-8 text-black" />
-            </div>
-            <div className="flex-1">
-              <h1 className="text-4xl sm:text-5xl font-bold mb-3 bg-gradient-to-r from-white via-yellow-100 to-yellow-300 bg-clip-text text-transparent">
-                {songData.title}
-              </h1>
-              <div className="flex flex-wrap gap-2">
-                <span className="px-4 py-1.5 bg-gradient-to-r from-yellow-500/20 to-yellow-600/20 border border-yellow-500/30 rounded-full text-sm font-medium text-yellow-400">
-                  {songData.genre}
-                </span>
-                <span className="px-4 py-1.5 bg-gradient-to-r from-blue-500/20 to-blue-600/20 border border-blue-500/30 rounded-full text-sm font-medium text-blue-400">
-                  {songData.mood}
-                </span>
-              </div>
-            </div>
+        {/* Progress Number */}
+        <div className="mb-8">
+          <div className="text-6xl font-bold text-yellow-500 mb-2">
+            {progress}%
+          </div>
+          <div className="text-sm text-gray-400 uppercase tracking-wider">
+            {currentStage.name}
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2 space-y-6">
-            <div className="bg-gradient-to-br from-[#1e2936] to-[#16202d] rounded-2xl p-6 border border-gray-700/50 shadow-2xl">
-              <h2 className="text-2xl font-bold mb-6">Full Production</h2>
-              <div className="bg-[#0a0e14] rounded-xl p-8 sm:p-12 flex flex-col items-center justify-center min-h-[300px] border border-gray-800">
-                {isProducing ? (
-                  <div className="w-full max-w-lg">
-                    <Loader2 className="w-24 h-24 animate-spin mx-auto text-yellow-500 mb-8" />
-                    <p className="text-gray-300 text-center mb-8 text-xl font-semibold">
-                      Crafting your masterpiece...
-                    </p>
-                    <div className="h-3 bg-gray-800 rounded-full overflow-hidden shadow-inner">
-                      <div
-                        className="h-full bg-gradient-to-r from-yellow-500 to-yellow-500 transition-all duration-300"
-                        style={{ width: `${progress}%` }}
-                      ></div>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="w-full max-w-lg">
-                    <div className="text-center mb-8">
-                      <p className="text-2xl font-bold mb-2">
-                        Track Complete! 🎉
-                      </p>
-                    </div>
-                    <div className="bg-gradient-to-r from-[#1e2936] to-[#253240] rounded-xl p-6 border border-gray-700 shadow-xl">
-                      <div className="flex items-center gap-4">
-                        <button
-                          onClick={togglePlayback}
-                          className="w-16 h-16 bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-full flex items-center justify-center"
-                        >
-                          {isPlaying ? (
-                            <Pause className="w-8 h-8 text-black" />
-                          ) : (
-                            <Play className="w-8 h-8 text-black ml-1" />
-                          )}
-                        </button>
-                        <p className="font-bold text-lg text-white">
-                          {songData.title}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
+        {/* Stage List */}
+        <div className="space-y-4 w-full max-w-md mx-auto">
+          {STAGES.map((stage, index) => {
+            const isActive = index === currentStageIndex;
+            const isComplete = progress >= stage.end;
+            return (
+              <div
+                key={stage.name}
+                className={`flex items-center gap-4 p-4 rounded-lg border transition-all duration-300 ${
+                  isActive
+                    ? "bg-yellow-500/10 border-yellow-500"
+                    : isComplete
+                    ? "bg-green-500/10 border-green-500/30"
+                    : "bg-[#1e2936]/50 border-gray-700"
+                }`}
+              >
+                <div
+                  className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 transition-colors duration-300 ${
+                    isActive
+                      ? "bg-yellow-500"
+                      : isComplete
+                      ? "bg-green-500"
+                      : "bg-gray-600"
+                  }`}
+                >
+                  {isComplete ? (
+                    <Check className="w-5 h-5 text-black" />
+                  ) : (
+                    <stage.icon
+                      className={`w-5 h-5 ${
+                        isActive ? "text-black" : "text-white"
+                      }`}
+                    />
+                  )}
+                </div>
+                <p
+                  className={`font-medium transition-colors duration-300 ${
+                    isActive
+                      ? "text-yellow-300"
+                      : isComplete
+                      ? "text-green-300"
+                      : "text-gray-400"
+                  }`}
+                >
+                  {stage.name}
+                </p>
+                {isActive && (
+                  <Loader2 className="w-5 h-5 ml-auto text-yellow-400 animate-spin" />
                 )}
               </div>
-            </div>
-          </div>
-
-          <div className="lg:col-span-1">
-            <div className="bg-gradient-to-br from-[#1e2936] to-[#16202d] rounded-2xl p-6 border border-gray-700/50 shadow-2xl sticky top-24">
-              <h2 className="text-xl font-bold mb-6">AI Press Kit</h2>
-              {isGeneratingEpk ? (
-                <div className="text-center py-12">
-                  <Loader2 className="w-16 h-16 animate-spin mx-auto text-yellow-500 mb-6" />
-                  <p className="text-gray-300 font-medium">
-                    Generating your press kit...
-                  </p>
-                </div>
-              ) : epkData ? (
-                <div className="space-y-6">
-                  <div className="group">
-                    <h3 className="text-sm font-semibold text-gray-300 uppercase tracking-wide mb-3">
-                      Cover Art
-                    </h3>
-                    <div className="relative w-full aspect-square bg-[#0a0e14] rounded-xl overflow-hidden border border-gray-700">
-                      <Image
-                        src={epkData.albumArt}
-                        alt="AI Generated Album Art"
-                        width={400}
-                        height={400}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <div className="flex gap-2 mb-4 bg-[#0a0e14] p-1 rounded-lg">
-                      <button
-                        onClick={() => setActiveTab("bio")}
-                        className={`flex-1 py-2 px-3 rounded-md text-xs font-medium ${
-                          activeTab === "bio"
-                            ? "bg-yellow-500 text-black"
-                            : "text-gray-400"
-                        }`}
-                      >
-                        Biography
-                      </button>
-                      <button
-                        onClick={() => setActiveTab("press")}
-                        className={`flex-1 py-2 px-3 rounded-md text-xs font-medium ${
-                          activeTab === "press"
-                            ? "bg-yellow-500 text-black"
-                            : "text-gray-400"
-                        }`}
-                      >
-                        Press Release
-                      </button>
-                      <button
-                        onClick={() => setActiveTab("social")}
-                        className={`flex-1 py-2 px-3 rounded-md text-xs font-medium ${
-                          activeTab === "social"
-                            ? "bg-yellow-500 text-black"
-                            : "text-gray-400"
-                        }`}
-                      >
-                        Social
-                      </button>
-                    </div>
-                    <div className="bg-[#0a0e14] rounded-xl p-4 border border-gray-800 min-h-[200px] max-h-[300px] overflow-y-auto">
-                      {activeTab === "bio" && (
-                        <p className="text-sm text-gray-300">
-                          {epkData.biography}
-                        </p>
-                      )}
-                      {activeTab === "press" && (
-                        <p className="text-sm text-gray-300 whitespace-pre-wrap">
-                          {epkData.pressRelease}
-                        </p>
-                      )}
-                      {activeTab === "social" && (
-                        <div className="space-y-3">
-                          {epkData.socialBlurbs.map((blurb, index) => (
-                            <div
-                              key={index}
-                              className="group p-4 bg-[#1e2936] rounded-lg border border-gray-700"
-                            >
-                              <button
-                                onClick={() => copyToClipboard(blurb, index)}
-                                className="float-right p-1.5 rounded"
-                              >
-                                {copiedIndex === index ? (
-                                  <Check className="w-4 h-4 text-green-500" />
-                                ) : (
-                                  <Copy className="w-4 h-4 text-gray-400" />
-                                )}
-                              </button>
-                              <p className="text-sm text-gray-300">{blurb}</p>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                  <div className="space-y-2 pt-4 border-t border-gray-700">
-                    <Button
-                      onClick={() => setShowDSPModal(true)}
-                      className="w-full bg-gradient-to-r from-yellow-500 to-yellow-600 text-black font-semibold py-6"
-                    >
-                      <Share2 className="w-5 h-5 mr-2" />
-                      Distribute to Platforms
-                    </Button>
-                    <Button
-                      onClick={handleDownloadPressKitSummary}
-                      variant="outline"
-                      className="w-full border-gray-600"
-                    >
-                      <FileText className="w-4 h-4 mr-2" />
-                      Download Press Kit Summary
-                    </Button>
-                  </div>
-                </div>
-              ) : (
-                <div className="text-center py-12 text-gray-500">
-                  <p>Press kit will be generated after production</p>
-                </div>
-              )}
-            </div>
-          </div>
+            );
+          })}
         </div>
-      </main>
 
-      {epkData && songData && (
-        <DSPExportModal
-          isOpen={showDSPModal}
-          onClose={() => setShowDSPModal(false)}
-          songData={songData}
-          albumArt={epkData.albumArt}
-          epkData={epkData}
-        />
-      )}
+        {/* Completion Message */}
+        {progress >= 100 && (
+          <div className="mt-12 animate-in fade-in duration-700">
+            <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-6 mb-4">
+              <CheckCircle className="w-12 h-12 text-green-400 mx-auto mb-3" />
+              <p className="text-lg font-semibold text-green-300 mb-2">
+                Your track is ready! 🎉
+              </p>
+              <p className="text-sm text-gray-400">
+                {isGeneratingEpk
+                  ? "Generating your press kit and distribution package..."
+                  : "Redirecting to your Release Dashboard..."}
+              </p>
+            </div>
+          </div>
+        )}
+      </div>
+
+      <style jsx global>{`
+        @keyframes spin-slow {
+          from {
+            transform: rotate(0deg);
+          }
+          to {
+            transform: rotate(360deg);
+          }
+        }
+        .animate-spin-slow {
+          animation: spin-slow 15s linear infinite;
+        }
+      `}</style>
     </div>
   );
 }

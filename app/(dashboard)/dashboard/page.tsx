@@ -1,16 +1,61 @@
+// KEY CHANGE: This is now a Client Component to access localStorage
+"use client";
+
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { Plus, Info } from "lucide-react";
+import { Plus, Info, Loader2 } from "lucide-react";
 import { SongCard } from "@/components/dashboard/SongCard";
 import { getUserProfile } from "@/app/actions/user-actions";
-import { getAllSongs } from "@/lib/data/dummy-songs";
+// KEY CHANGE: We now use this as a fallback for the first load
+import { getAllSongs as getInitialSongs } from "@/lib/data/dummy-songs";
 
-export default async function DashboardPage() {
-  // Get user profile
-  const profile = await getUserProfile();
+// Define a type for the profile for better type safety
+interface UserProfile {
+  artist_name: string;
+  email: string;
+  first_name: string;
+  last_name: string;
+}
 
-  // Get songs from dummy data
-  const songs = getAllSongs();
+export default function DashboardPage() {
+  // KEY CHANGE: We use state to hold data fetched on the client
+  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [songs, setSongs] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // KEY CHANGE: We fetch all data in a useEffect hook
+  useEffect(() => {
+    async function loadDashboardData() {
+      // Fetch user profile
+      const userProfile = await getUserProfile();
+      setProfile(userProfile);
+
+      // Fetch songs from localStorage
+      const storedSongs = localStorage.getItem("allSongs");
+      if (storedSongs) {
+        setSongs(JSON.parse(storedSongs));
+      } else {
+        // If nothing in localStorage, this is the first visit.
+        // Load the initial dummy songs and save them.
+        const initialSongs = getInitialSongs();
+        setSongs(initialSongs);
+        localStorage.setItem("allSongs", JSON.stringify(initialSongs));
+      }
+
+      setIsLoading(false);
+    }
+
+    loadDashboardData();
+  }, []); // Empty dependency array means this runs once on component mount
+
+  if (isLoading || !profile) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <Loader2 className="w-12 h-12 animate-spin text-yellow-500" />
+      </div>
+    );
+  }
 
   return (
     <div>

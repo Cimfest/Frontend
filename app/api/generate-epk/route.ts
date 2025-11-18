@@ -6,7 +6,21 @@ const hf = new HfInference(process.env.HUGGINGFACE_API_KEY);
 
 export async function POST(request: Request) {
   try {
-    const { title, genre, mood, artistName } = await request.json();
+    const body = await request.json();
+    console.log("Received request body:", body);
+
+    const { title, genre, mood, artistName } = body;
+
+    // Validation
+    if (!title || !genre || !mood || !artistName) {
+      console.error("Missing fields:", { title, genre, mood, artistName });
+      return NextResponse.json(
+        {
+          error: "Missing required fields: title, genre, mood, and artistName",
+        },
+        { status: 400 }
+      );
+    }
 
     // Enhanced Biography Prompt - More structured and specific
     const biographyPrompt = `You are a professional music journalist writing an artist biography.

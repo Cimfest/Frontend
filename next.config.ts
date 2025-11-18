@@ -1,26 +1,21 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // --- ADD THIS BLOCK ---
   images: {
+    // This allows the base64 Data URLs from our AI
+    dangerouslyAllowSVG: true,
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+
+    // This allows remote images from Unsplash
     remotePatterns: [
       {
         protocol: "https",
         hostname: "source.unsplash.com",
         port: "",
-        // Allow all paths on source.unsplash.com (collection/, random/, etc.)
         pathname: "/**",
       },
-      // You can add other domains here in the future
-      // For example, if your Supabase storage has a specific URL:
-      // {
-      //   protocol: 'https',
-      //   hostname: 'your-project-id.supabase.co',
-      //   port: '',
-      //   pathname: '/storage/v1/object/public/**',
-      // },
+      // You can add other trusted remote domains here in the future
     ],
   },
-  // --------------------
 };
 
 export default nextConfig;
