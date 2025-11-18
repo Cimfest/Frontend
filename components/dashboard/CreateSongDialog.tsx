@@ -1,8 +1,10 @@
+// /components/dashboard/CreateSongDialog.tsx
 "use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { v4 as uuidv4 } from "uuid";
+import { useSongStore } from "@/lib/store";
 import {
   Dialog,
   DialogContent,
@@ -23,6 +25,8 @@ import { Upload } from "lucide-react";
 
 export function CreateSongDialog() {
   const router = useRouter();
+  const setSongDetails = useSongStore((state) => state.setSongDetails);
+
   const [open, setOpen] = useState(true);
   const [songTitle, setSongTitle] = useState("");
   const [genre, setGenre] = useState("");
@@ -34,70 +38,38 @@ export function CreateSongDialog() {
     setOpen(false);
     setTimeout(() => router.push("/dashboard"), 150);
   };
-
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (e.type === "dragenter" || e.type === "dragover") {
-      setDragActive(true);
-    } else if (e.type === "dragleave") {
-      setDragActive(false);
-    }
+    if (e.type === "dragenter" || e.type === "dragover") setDragActive(true);
+    else if (e.type === "dragleave") setDragActive(false);
   };
-
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      const droppedFile = e.dataTransfer.files[0];
-      if (
-        droppedFile.type === "audio/mpeg" ||
-        droppedFile.type === "audio/wav"
-      ) {
-        setFile(droppedFile);
-      }
+    if (e.dataTransfer.files?.[0]) {
+      if (["audio/mpeg", "audio/wav"].includes(e.dataTransfer.files[0].type))
+        setFile(e.dataTransfer.files[0]);
     }
   };
-
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setFile(e.target.files[0]);
-    }
+    if (e.target.files?.[0]) setFile(e.target.files[0]);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!songTitle || !genre || !mood || !file) return;
 
-    // Generate a unique ID for the new song
     const newSongId = uuidv4();
 
-    // Store the song data in localStorage or sessionStorage for the next page
-    // (In production, you'd send this to your backend API)
-    const songData = {
-      id: newSongId,
+    setSongDetails({
       title: songTitle,
       genre,
       mood,
-      fileName: file.name,
-      createdAt: new Date().toISOString(),
-    };
-
-    // Store in sessionStorage so the production page can access it
-    sessionStorage.setItem("currentSong", JSON.stringify(songData));
-
-    // You would also upload the file here in a real app
-    console.log("Submitting new track:", {
-      newSongId,
-      songTitle,
-      genre,
-      mood,
-      file,
+      vocalFile: file,
     });
 
-    // Redirect to the production/processing page
-    // Adjust this route based on your actual folder structure
     router.push(`/production/${newSongId}`);
   };
 
@@ -159,9 +131,8 @@ export function CreateSongDialog() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="afrobeats">Afrobeats</SelectItem>
-                  <SelectItem value="makossa">Makossa</SelectItem>
                   <SelectItem value="bikutsi">Bikutsi</SelectItem>
-                  <SelectItem value="gospel">Gospel</SelectItem>
+                  <SelectItem value="mbole">Mbolé</SelectItem>
                 </SelectContent>
               </Select>
             </div>
