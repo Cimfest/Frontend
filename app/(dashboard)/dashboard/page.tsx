@@ -1,4 +1,3 @@
-// KEY CHANGE: This is now a Client Component to access localStorage
 "use client";
 
 import { useState, useEffect } from "react";
@@ -7,10 +6,8 @@ import Link from "next/link";
 import { Plus, Info, Loader2 } from "lucide-react";
 import { SongCard } from "@/components/dashboard/SongCard";
 import { getUserProfile } from "@/app/actions/user-actions";
-// KEY CHANGE: We now use this as a fallback for the first load
 import { getAllSongs as getInitialSongs } from "@/lib/data/dummy-songs";
 
-// Define a type for the profile for better type safety
 interface UserProfile {
   artist_name: string;
   email: string;
@@ -18,13 +15,22 @@ interface UserProfile {
   last_name: string;
 }
 
+interface Song {
+  id: string;
+  title: string;
+  artist_name: string;
+  status: "Completed" | "Processing" | "Failed" | "Pending";
+  albumArt?: string | null;
+  genre?: string;
+  mood?: string;
+  createdAt?: string;
+}
+
 export default function DashboardPage() {
-  // KEY CHANGE: We use state to hold data fetched on the client
   const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [songs, setSongs] = useState([]);
+  const [songs, setSongs] = useState<Song[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // KEY CHANGE: We fetch all data in a useEffect hook
   useEffect(() => {
     async function loadDashboardData() {
       // Fetch user profile
@@ -34,10 +40,11 @@ export default function DashboardPage() {
       // Fetch songs from localStorage
       const storedSongs = localStorage.getItem("allSongs");
       if (storedSongs) {
-        setSongs(JSON.parse(storedSongs));
+        const parsedSongs = JSON.parse(storedSongs);
+        console.log("Loaded songs from localStorage:", parsedSongs);
+        setSongs(parsedSongs);
       } else {
-        // If nothing in localStorage, this is the first visit.
-        // Load the initial dummy songs and save them.
+        // If nothing in localStorage, load initial dummy songs
         const initialSongs = getInitialSongs();
         setSongs(initialSongs);
         localStorage.setItem("allSongs", JSON.stringify(initialSongs));
@@ -47,7 +54,27 @@ export default function DashboardPage() {
     }
 
     loadDashboardData();
-  }, []); // Empty dependency array means this runs once on component mount
+  }, []);
+
+  // Listen for storage changes (when new songs are added)
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const storedSongs = localStorage.getItem("allSongs");
+      if (storedSongs) {
+        setSongs(JSON.parse(storedSongs));
+      }
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    
+    // Also check for updates on focus (in case user comes back from another tab)
+    window.addEventListener("focus", handleStorageChange);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener("focus", handleStorageChange);
+    };
+  }, []);
 
   if (isLoading || !profile) {
     return (
