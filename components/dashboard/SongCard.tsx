@@ -1,8 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
-import { Mic, ArrowRight, ImageIcon } from "lucide-react";
+import { Mic, ArrowRight, ImageIcon, Trash2 } from "lucide-react";
 import { StatusBadge } from "./StatusBadge";
 import { ShareButton } from "./ShareButton";
 
@@ -14,8 +13,19 @@ type Song = {
   albumArt?: string | null;
 };
 
-export const SongCard = ({ song }: { song: Song }) => {
-  console.log("SongCard - Album Art URL:", song.albumArt); // Debug log
+type SongCardProps = {
+  song: Song;
+  onDelete?: (songId: string) => void;
+};
+
+export const SongCard = ({ song, onDelete }: SongCardProps) => {
+  const handleDelete = (e: React.MouseEvent) => {
+    e.preventDefault(); // Prevent navigation to song details
+    e.stopPropagation(); // Prevent event bubbling
+    if (onDelete) {
+      onDelete(song.id);
+    }
+  };
 
   return (
     <Link
@@ -23,18 +33,25 @@ export const SongCard = ({ song }: { song: Song }) => {
       className="block group"
       aria-label={`View details for ${song.title}`}
     >
-      <div className="bg-[#1e2936]/50 border border-gray-800 rounded-2xl overflow-hidden hover:bg-[#1e2936] hover:border-yellow-500/50 transition-all duration-300 shadow-lg hover:shadow-2xl hover:shadow-yellow-500/10">
+      <div className="bg-[#1e2936]/50 border border-gray-800 rounded-2xl overflow-hidden hover:bg-[#1e2936] hover:border-yellow-500/50 transition-all duration-300 shadow-lg hover:shadow-2xl hover:shadow-yellow-500/10 relative">
+        
+        {/* Delete Button */}
+        <button
+          onClick={handleDelete}
+          className="absolute top-3 right-3 z-10 p-2 bg-red-500/90 hover:bg-red-600 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 shadow-lg"
+          aria-label={`Delete ${song.title}`}
+        >
+          <Trash2 className="h-4 w-4 text-white" />
+        </button>
+
         {/* Album Art Section - Square aspect ratio */}
-        <div className="relative aspect-square w-full bg-[#0a0e14]">
+        <div className="relative aspect-square w-full bg-[#0a0e14] overflow-hidden">
           {song.albumArt ? (
-            <Image
+            <img
               src={song.albumArt}
               alt={`Album art for ${song.title}`}
-              fill
-              className="object-cover transition-transform duration-300 group-hover:scale-105"
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              priority={false}
-              unoptimized={song.albumArt.startsWith('data:') || song.albumArt.startsWith('blob:')}
+              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+              loading="lazy"
             />
           ) : (
             <div className="flex flex-col items-center justify-center h-full text-gray-500">
