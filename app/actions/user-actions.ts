@@ -38,10 +38,10 @@ export async function getUserProfile() {
     // If no session, return dummy data for demo
     return {
       id: 'demo-user-id',
-      first_name: 'Demo',
-      last_name: 'User', 
-      artist_name: 'Demo Artist',
-      email: 'demo@example.com',
+      first_name: 'Blink237',
+      last_name: '',
+      artist_name: 'Brandon Blink', 
+      email: 'Brandon237@gmail.com',
     };
 
   } catch (error) {
@@ -49,10 +49,10 @@ export async function getUserProfile() {
     // Return dummy data on error
     return {
       id: 'demo-user-id',
-      first_name: 'Demo',
+      first_name: 'Blink',
       last_name: 'User',
-      artist_name: 'Demo Artist', 
-      email: 'demo@example.com',
+      artist_name: 'Brandon Blink', 
+      email: 'Brandon@gmail.com',
     };
   }
 }
