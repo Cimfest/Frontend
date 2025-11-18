@@ -68,7 +68,7 @@ export const SongCard = ({ song, onDelete }: SongCardProps) => {
               <h3 className="text-xl font-bold text-white truncate mb-1">
                 {song.title}
               </h3>
-              <p className="text-sm text-gray-400">by {song.artist_name}</p>
+              <p className="text-sm text-gray-400">by {song.artist_name} <b>Brandon237</b></p>
             </div>
             <div className="flex items-center gap-2 flex-shrink-0">
               <ShareButton

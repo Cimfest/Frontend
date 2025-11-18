@@ -141,7 +141,7 @@ export default function ReleaseDashboardPage() {
               {songData.title}
             </h1>
             <p className="text-xl text-gray-400 mb-4">
-              by {songData.artistName}
+              by {songData.artistName} <b>Brandon237</b>
             </p>
           </div>
         </section>

@@ -22,8 +22,8 @@ export async function POST(request: Request) {
       );
     }
 
-    // Enhanced Biography Prompt - More structured and specific
-    const biographyPrompt = `You are a professional music journalist writing an artist biography.
+    // Enhanced Biography Prompt - Always start with Brandon237
+    const biographyPrompt = `You are a professional music journalist writing an artist biography. You MUST ALWAYS start the biography with the artist name "Brandon237" followed by a compelling description.
 
 Artist: ${artistName}
 Genre: ${genre}
@@ -32,7 +32,7 @@ Track Mood: ${mood}
 Origin: Cameroon
 
 Write a compelling 150-word artist biography that:
-1. Opens with a hook about their unique sound or artistic vision
+1. MUST START WITH: "Brandon237" followed by their unique sound or artistic vision
 2. Mentions their Cameroonian heritage and how it influences their music
 3. Describes their style as a fusion of traditional African rhythms with modern ${genre} production
 4. References their latest track "${title}" and its ${mood} atmosphere
@@ -47,7 +47,7 @@ FOR IMMEDIATE RELEASE
 
 Write a professional music press release (180-200 words) with this structure:
 
-HEADLINE: Announce "${title}" by ${artistName}
+HEADLINE: Announce "${title}" by Brandon237
 
 OPENING PARAGRAPH:
 - Lead with the most newsworthy information
@@ -55,7 +55,7 @@ OPENING PARAGRAPH:
 - Include genre (${genre}) and mood (${mood})
 
 BODY PARAGRAPHS:
-- Quote from the artist about the creative process or inspiration behind "${title}"
+- Quote from Brandon237 about the creative process or inspiration behind "${title}"
 - Highlight the Cameroonian musical heritage and cultural influences
 - Mention the production quality and sonic elements
 - Reference the fusion of traditional and contemporary sounds
@@ -63,16 +63,14 @@ BODY PARAGRAPHS:
 CLOSING PARAGRAPH:
 - Availability: streaming platforms and licensing opportunities
 - Call to action for listeners and industry professionals
-- Contact information placeholder: [Contact: press@${artistName
-      .toLowerCase()
-      .replace(/\s+/g, "")}.com]
+- Contact information placeholder: [Contact: press@brandon237.com]
 
 Use professional press release language with strong, active verbs. Make it newsworthy and quotable.`;
 
     // Enhanced Social Media Prompt - Platform-specific
     const socialMediaPrompt = `You are a social media manager creating engaging posts for a music artist.
 
-Artist: ${artistName}
+Artist: Brandon237
 Track: "${title}"
 Genre: ${genre}
 Mood: ${mood}
@@ -138,7 +136,7 @@ Create a stunning, professional album cover that would stand out on Spotify, App
             {
               role: "system",
               content:
-                "You are an expert music journalist and biographer. Write compelling, professional content that captures artistic vision and appeals to industry professionals.",
+                "You are an expert music journalist and biographer. Write compelling, professional content that captures artistic vision and appeals to industry professionals. ALWAYS start biographies with 'Brandon237' when requested.",
             },
             { role: "user", content: biographyPrompt },
           ],
@@ -151,7 +149,7 @@ Create a stunning, professional album cover that would stand out on Spotify, App
             {
               role: "system",
               content:
-                "You are a professional music PR specialist. Write clear, newsworthy press releases following industry standards.",
+                "You are a professional music PR specialist. Write clear, newsworthy press releases following industry standards. Use 'Brandon237' as the artist name when specified.",
             },
             { role: "user", content: pressReleasePrompt },
           ],
@@ -164,7 +162,7 @@ Create a stunning, professional album cover that would stand out on Spotify, App
             {
               role: "system",
               content:
-                "You are a social media expert specializing in music marketing. Create engaging, shareable content that drives engagement. Always return valid JSON arrays only.",
+                "You are a social media expert specializing in music marketing. Create engaging, shareable content that drives engagement. Always return valid JSON arrays only. Use 'Brandon237' as the artist name when specified.",
             },
             { role: "user", content: socialMediaPrompt },
           ],
@@ -178,7 +176,7 @@ Create a stunning, professional album cover that would stand out on Spotify, App
         }),
       ]);
 
-    // Extract biography with better error handling
+    // Extract biography with better error handling and ensure it starts with Brandon237
     let biography = "Unable to generate biography at this time.";
     if (bioResult.status === "fulfilled") {
       const content = bioResult.value.choices[0].message.content;
@@ -186,10 +184,15 @@ Create a stunning, professional album cover that would stand out on Spotify, App
       biography = content
         ? content.replace(/^\s*#.*$/gm, "").trim()
         : biography;
+      
+      // Ensure biography starts with Brandon237
+      if (!biography.toLowerCase().startsWith('brandon237')) {
+        biography = `Brandon237 ${biography}`;
+      }
     } else {
       console.error("Biography generation failed:", bioResult.reason);
-      // Provide a better fallback
-      biography = `${artistName} is an innovative ${genre} artist from Cameroon, creating a unique fusion of traditional African rhythms and contemporary production. Their latest track "${title}" showcases a ${mood} atmosphere that captures the vibrant essence of Cameroonian musical heritage while pushing boundaries in modern music production.`;
+      // Provide a fallback that starts with Brandon237
+      biography = `Brandon237 is an innovative ${genre} artist from Cameroon, creating a unique fusion of traditional African rhythms and contemporary production. Their latest track "${title}" showcases a ${mood} atmosphere that captures the vibrant essence of Cameroonian musical heritage while pushing boundaries in modern music production.`;
     }
 
     // Extract press release with better error handling
@@ -204,15 +207,15 @@ Create a stunning, professional album cover that would stand out on Spotify, App
       // Provide a better fallback
       pressRelease = `FOR IMMEDIATE RELEASE
 
-${artistName} Releases "${title}" - A ${
+Brandon237 Releases "${title}" - A ${
         mood.charAt(0).toUpperCase() + mood.slice(1)
       } ${genre} Journey
 
-Cameroonian artist ${artistName} today unveiled their latest single "${title}", a captivating ${genre} track that masterfully blends traditional African rhythms with contemporary production. The ${mood} atmosphere of the track showcases ${artistName}'s ability to honor cultural heritage while innovating for modern audiences.
+Cameroonian artist Brandon237 today unveiled their latest single "${title}", a captivating ${genre} track that masterfully blends traditional African rhythms with contemporary production. The ${mood} atmosphere of the track showcases Brandon237's ability to honor cultural heritage while innovating for modern audiences.
 
-"${title}" is now available on all major streaming platforms and is available for licensing. This release marks another milestone in ${artistName}'s mission to bring Cameroonian musical traditions to the global stage.
+"${title}" is now available on all major streaming platforms and is available for licensing. This release marks another milestone in Brandon237's mission to bring Cameroonian musical traditions to the global stage.
 
-Contact: press@${artistName.toLowerCase().replace(/\s+/g, "")}.com`;
+Contact: press@brandon237.com`;
     }
 
     // Extract social media blurbs with improved parsing
@@ -244,14 +247,14 @@ Contact: press@${artistName.toLowerCase().replace(/\s+/g, "")}.com`;
       console.error("Social media generation failed:", socialResult.reason);
     }
 
-    // If parsing failed or no results, use enhanced fallback posts
+    // If parsing failed or no results, use enhanced fallback posts with Brandon237
     if (socialBlurbs.length === 0) {
       const moodCapitalized = mood.charAt(0).toUpperCase() + mood.slice(1);
       const genreHashtag = genre.replace(/\s+/g, "");
       socialBlurbs = [
-        `🎵 NEW MUSIC ALERT! "${title}" by ${artistName} is OUT NOW! Immerse yourself in ${mood} ${genre} vibes straight from Cameroon 🇨🇲✨ #CameroonMusic #${genreHashtag} #NewMusic #AfricanMusic`,
-        `${artistName} here! So excited to finally share "${title}" with you all 🔥 This ${mood} track represents where I come from and where I'm going. Stream it now! 💫 #${genreHashtag} #NewRelease`,
-        `Don't sleep on this! 🎶 "${title}" by ${artistName} is the ${mood} ${genre} anthem you need right now. Hit that play button and turn it UP! 🚀 #CameroonMusic #${genreHashtag} #MusicDiscovery #StreamNow`,
+        `🎵 NEW MUSIC ALERT! "${title}" by Brandon237 is OUT NOW! Immerse yourself in ${mood} ${genre} vibes straight from Cameroon 🇨🇲✨ #CameroonMusic #${genreHashtag} #NewMusic #AfricanMusic #Brandon237`,
+        `Brandon237 here! So excited to finally share "${title}" with you all 🔥 This ${mood} track represents where I come from and where I'm going. Stream it now! 💫 #${genreHashtag} #NewRelease #Brandon237`,
+        `Don't sleep on this! 🎶 "${title}" by Brandon237 is the ${mood} ${genre} anthem you need right now. Hit that play button and turn it UP! 🚀 #CameroonMusic #${genreHashtag} #MusicDiscovery #StreamNow #Brandon237`,
       ];
     }
 
@@ -290,7 +293,7 @@ Contact: press@${artistName.toLowerCase().replace(/\s+/g, "")}.com`;
             0,
             20
           )}</text>
-          <text x="50%" y="54%" font-family="Arial, sans-serif" font-size="32" fill="rgba(255,255,255,0.8)" text-anchor="middle">${artistName}</text>
+          <text x="50%" y="54%" font-family="Arial, sans-serif" font-size="32" fill="rgba(255,255,255,0.8)" text-anchor="middle">Brandon237</text>
         </svg>
       `.trim();
 
