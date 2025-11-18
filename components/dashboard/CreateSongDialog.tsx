@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { v4 as uuidv4 } from "uuid"; // Ensure you've run: npm install uuid @types/uuid
+import { v4 as uuidv4 } from "uuid";
 import {
   Dialog,
   DialogContent,
@@ -32,7 +32,6 @@ export function CreateSongDialog() {
 
   const handleClose = () => {
     setOpen(false);
-    // This gives the dialog a moment to animate out before navigating
     setTimeout(() => router.push("/dashboard"), 150);
   };
 
@@ -71,10 +70,24 @@ export function CreateSongDialog() {
     e.preventDefault();
     if (!songTitle || !genre || !mood || !file) return;
 
-    // 1. Generate a unique ID for the new song
+    // Generate a unique ID for the new song
     const newSongId = uuidv4();
 
-    // 2. In a real app, this is where you'd trigger the backend API call
+    // Store the song data in localStorage or sessionStorage for the next page
+    // (In production, you'd send this to your backend API)
+    const songData = {
+      id: newSongId,
+      title: songTitle,
+      genre,
+      mood,
+      fileName: file.name,
+      createdAt: new Date().toISOString(),
+    };
+
+    // Store in sessionStorage so the production page can access it
+    sessionStorage.setItem("currentSong", JSON.stringify(songData));
+
+    // You would also upload the file here in a real app
     console.log("Submitting new track:", {
       newSongId,
       songTitle,
@@ -83,8 +96,9 @@ export function CreateSongDialog() {
       file,
     });
 
-    // 3. Redirect to the processing page for the new song
-    router.push(`/dashboard/song/${newSongId}`);
+    // Redirect to the production/processing page
+    // Adjust this route based on your actual folder structure
+    router.push(`/production/${newSongId}`);
   };
 
   return (
