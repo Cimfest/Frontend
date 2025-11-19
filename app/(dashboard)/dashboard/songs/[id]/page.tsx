@@ -1,22 +1,20 @@
-// ./app/(dashboard)/dashboard/songs/[id]/page.tsx
+// This file remains a Server Component
 
-import { notFound } from "next/navigation";
-import { SongDetailHeader } from "@/components/dashboard/SongDetailHeader";
-import { AudioPlayer } from "@/components/dashboard/AudioPlayer";
-import { TrackInformation } from "@/components/dashboard/TrackInformation";
-import { AIAnalysis } from "@/components/dashboard/AIAnalysis";
-import { QuickActions } from "@/components/dashboard/QuickActions";
+import { SongDetailView } from "@/components/dashboard/SongDetailView";
 
-// ADD THIS TYPE DEFINITION
-// This tells TypeScript the shape of the props for this page.
+// Define the type for the page props
 type SongDetailPageProps = {
   params: {
-    id: string; // The 'id' from the URL will be a string
+    id: string;
   };
 };
 
+// This function still runs on the server at build time, which is correct
 export async function generateStaticParams() {
-  // ... (your existing code is fine)
+  // This is a bit of a problem. If your songs are ONLY in localStorage,
+  // the server has no way to know what IDs to generate pages for.
+  // For the build to pass, you must provide some static IDs here.
+  // The ones you have are fine for a demo.
   return [
     { id: "1" },
     { id: "2" },
@@ -27,80 +25,8 @@ export async function generateStaticParams() {
   ];
 }
 
-// APPLY THE TYPE TO YOUR COMPONENT'S PROPS
+// The page component is now very clean
 export default async function SongDetailPage({ params }: SongDetailPageProps) {
-  // REMOVE THE UNNECESSARY 'await'
-  const { id } = params;
-
-  // The 'id' might need to be parsed if your getSongById function expects a number
-  // For example: const song = getSongById(parseInt(id, 10));
-  const song = getSongById(id);
-
-  if (!song) {
-    notFound();
-  }
-
-  const isTrackReady = song.status === "Completed";
-
-  return (
-    <div className="space-y-6">
-      <SongDetailHeader
-        title={song.title}
-        artist={song.artist_name}
-        status={song.status}
-      />
-
-      {/* ... The rest of your JSX is perfectly fine ... */}
-      <div className="border-b border-gray-700 mb-6">
-        <div className="flex gap-8">
-          <button className="pb-3 border-b-2 border-yellow-400 text-yellow-400 font-medium">
-            Overview
-          </button>
-          <button className="pb-3 text-gray-400 hover:text-white">
-            Production
-          </button>
-          <button className="pb-3 text-gray-400 hover:text-white">
-            Export
-          </button>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 space-y-6">
-          <AudioPlayer
-            title="Your Original Vocal"
-            duration={song.duration}
-            quality={song.original_vocal.quality}
-            format={song.original_vocal.format}
-            downloadUrl={song.original_vocal.url}
-            isReady={true}
-          />
-          <AudioPlayer
-            title="AI-Generated Full Track"
-            duration={song.duration}
-            downloadUrl={song.generated_track.url}
-            isGenerated={true}
-            isReady={isTrackReady}
-          />
-        </div>
-
-        <div className="space-y-6">
-          <TrackInformation
-            duration={song.duration}
-            genre={song.genre}
-            mood={song.mood}
-            bpm={song.bpm}
-            key={song.key}
-            created={song.created_at}
-          />
-          <AIAnalysis
-            vocalQuality={song.ai_analysis.vocal_quality}
-            pitchAccuracy={song.ai_analysis.pitch_accuracy}
-            rhythmSync={song.ai_analysis.rhythm_sync}
-          />
-          <QuickActions />
-        </div>
-      </div>
-    </div>
-  );
+  // We pass the 'id' from the server (params) to the client component as a prop
+  return <SongDetailView id={params.id} />;
 }
