@@ -1,12 +1,22 @@
-import { notFound } from "next/navigation";
+// ./app/(dashboard)/dashboard/songs/[id]/page.tsx
 
+import { notFound } from "next/navigation";
 import { SongDetailHeader } from "@/components/dashboard/SongDetailHeader";
 import { AudioPlayer } from "@/components/dashboard/AudioPlayer";
 import { TrackInformation } from "@/components/dashboard/TrackInformation";
 import { AIAnalysis } from "@/components/dashboard/AIAnalysis";
 import { QuickActions } from "@/components/dashboard/QuickActions";
 
+// ADD THIS TYPE DEFINITION
+// This tells TypeScript the shape of the props for this page.
+type SongDetailPageProps = {
+  params: {
+    id: string; // The 'id' from the URL will be a string
+  };
+};
+
 export async function generateStaticParams() {
+  // ... (your existing code is fine)
   return [
     { id: "1" },
     { id: "2" },
@@ -17,10 +27,13 @@ export async function generateStaticParams() {
   ];
 }
 
-export default async function SongDetailPage({ params }) {
-  // Await the params since it's an asynchronous API now
-  const { id } = await params;
+// APPLY THE TYPE TO YOUR COMPONENT'S PROPS
+export default async function SongDetailPage({ params }: SongDetailPageProps) {
+  // REMOVE THE UNNECESSARY 'await'
+  const { id } = params;
 
+  // The 'id' might need to be parsed if your getSongById function expects a number
+  // For example: const song = getSongById(parseInt(id, 10));
   const song = getSongById(id);
 
   if (!song) {
@@ -37,7 +50,7 @@ export default async function SongDetailPage({ params }) {
         status={song.status}
       />
 
-      {/* Tabs */}
+      {/* ... The rest of your JSX is perfectly fine ... */}
       <div className="border-b border-gray-700 mb-6">
         <div className="flex gap-8">
           <button className="pb-3 border-b-2 border-yellow-400 text-yellow-400 font-medium">
@@ -52,9 +65,7 @@ export default async function SongDetailPage({ params }) {
         </div>
       </div>
 
-      {/* Two-column layout */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left column - Audio players */}
         <div className="lg:col-span-2 space-y-6">
           <AudioPlayer
             title="Your Original Vocal"
@@ -64,7 +75,6 @@ export default async function SongDetailPage({ params }) {
             downloadUrl={song.original_vocal.url}
             isReady={true}
           />
-
           <AudioPlayer
             title="AI-Generated Full Track"
             duration={song.duration}
@@ -74,7 +84,6 @@ export default async function SongDetailPage({ params }) {
           />
         </div>
 
-        {/* Right column - Information panels */}
         <div className="space-y-6">
           <TrackInformation
             duration={song.duration}
@@ -84,13 +93,11 @@ export default async function SongDetailPage({ params }) {
             key={song.key}
             created={song.created_at}
           />
-
           <AIAnalysis
             vocalQuality={song.ai_analysis.vocal_quality}
             pitchAccuracy={song.ai_analysis.pitch_accuracy}
             rhythmSync={song.ai_analysis.rhythm_sync}
           />
-
           <QuickActions />
         </div>
       </div>
