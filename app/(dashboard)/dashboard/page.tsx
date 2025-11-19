@@ -40,26 +40,26 @@ export default function DashboardPage() {
 
       // Fetch songs from localStorage
       const storedSongs = localStorage.getItem("allSongs");
-      
+
       let parsedSongs: Song[] = [];
-      
+
       if (storedSongs) {
         parsedSongs = JSON.parse(storedSongs);
         console.log("Loaded songs from localStorage:", parsedSongs);
-        
+
         // Add random placeholder images to ALL songs
-        parsedSongs = parsedSongs.map(song => ({
+        parsedSongs = parsedSongs.map((song) => ({
           ...song,
-          albumArt: song.albumArt || getRandomPlaceholderImage()
+          albumArt: song.albumArt || getRandomPlaceholderImage(),
         }));
-        
+
         console.log("Songs with album art:", parsedSongs);
         setSongs(parsedSongs);
       } else {
         // If nothing in localStorage, load initial dummy songs with placeholder images
-        const initialSongs = getInitialSongs().map(song => ({
+        const initialSongs = getInitialSongs().map((song) => ({
           ...song,
-          albumArt: getRandomPlaceholderImage()
+          albumArt: getRandomPlaceholderImage(),
         }));
         console.log("Initial songs with album art:", initialSongs);
         setSongs(initialSongs);
@@ -74,16 +74,20 @@ export default function DashboardPage() {
 
   // Function to handle song deletion
   const handleDeleteSong = (songId: string) => {
-    if (confirm("Are you sure you want to delete this song? This action cannot be undone.")) {
+    if (
+      confirm(
+        "Are you sure you want to delete this song? This action cannot be undone."
+      )
+    ) {
       // Filter out the song to be deleted
-      const updatedSongs = songs.filter(song => song.id !== songId);
-      
+      const updatedSongs = songs.filter((song) => song.id !== songId);
+
       // Update state
       setSongs(updatedSongs);
-      
+
       // Update localStorage
       localStorage.setItem("allSongs", JSON.stringify(updatedSongs));
-      
+
       console.log(`Song ${songId} deleted`);
     }
   };
@@ -92,16 +96,16 @@ export default function DashboardPage() {
   useEffect(() => {
     const handleStorageChange = () => {
       const storedSongs = localStorage.getItem("allSongs");
-      
+
       if (storedSongs) {
         let parsedSongs = JSON.parse(storedSongs);
-        
+
         // Add random placeholder images to songs that don't have album art
         parsedSongs = parsedSongs.map((song: Song) => ({
           ...song,
-          albumArt: song.albumArt || getRandomPlaceholderImage()
+          albumArt: song.albumArt || getRandomPlaceholderImage(),
         }));
-        
+
         setSongs(parsedSongs);
       }
     };
@@ -170,11 +174,7 @@ export default function DashboardPage() {
       {songs && songs.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {songs.map((song) => (
-            <SongCard 
-              key={song.id} 
-              song={song} 
-              onDelete={handleDeleteSong}
-            />
+            <SongCard key={song.id} song={song} onDelete={handleDeleteSong} />
           ))}
         </div>
       ) : (

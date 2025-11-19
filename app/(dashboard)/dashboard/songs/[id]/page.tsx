@@ -1,33 +1,33 @@
-import { notFound } from 'next/navigation'
-import { getSongById } from '@/lib/data/dummy-songs'
-import { SongDetailHeader } from '@/components/dashboard/SongDetailHeader'
-import { AudioPlayer } from '@/components/dashboard/AudioPlayer'
-import { TrackInformation } from '@/components/dashboard/TrackInformation'
-import { AIAnalysis } from '@/components/dashboard/AIAnalysis'
-import { QuickActions } from '@/components/dashboard/QuickActions'
+import { notFound } from "next/navigation";
+
+import { SongDetailHeader } from "@/components/dashboard/SongDetailHeader";
+import { AudioPlayer } from "@/components/dashboard/AudioPlayer";
+import { TrackInformation } from "@/components/dashboard/TrackInformation";
+import { AIAnalysis } from "@/components/dashboard/AIAnalysis";
+import { QuickActions } from "@/components/dashboard/QuickActions";
 
 export async function generateStaticParams() {
   return [
-    { id: '1' },
-    { id: '2' },
-    { id: '3' },
-    { id: '4' },
-    { id: '5' },
-    { id: '6' },
-  ]
+    { id: "1" },
+    { id: "2" },
+    { id: "3" },
+    { id: "4" },
+    { id: "5" },
+    { id: "6" },
+  ];
 }
 
 export default async function SongDetailPage({ params }) {
   // Await the params since it's an asynchronous API now
   const { id } = await params;
 
-  const song = getSongById(id)
+  const song = getSongById(id);
 
   if (!song) {
-    notFound()
+    notFound();
   }
 
-  const isTrackReady = song.status === 'Completed'
+  const isTrackReady = song.status === "Completed";
 
   return (
     <div className="space-y-6">
@@ -95,5 +95,5 @@ export default async function SongDetailPage({ params }) {
         </div>
       </div>
     </div>
-  )
+  );
 }
