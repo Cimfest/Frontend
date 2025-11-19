@@ -8,7 +8,6 @@ export const metadata: Metadata = {
     "Sign in or create an account to start your music export journey.",
 };
 
-// This is the static marketing panel component for the right side
 const MarketingPanel = () => (
   <div className="hidden lg:flex flex-col items-start justify-center p-12 bg-gray-900 text-white relative overflow-hidden">
     {/* Decorative blobs */}
@@ -75,7 +74,6 @@ const FeatureItem = ({
   </div>
 );
 
-// This layout is rendered as a slot in the root layout for auth pages
 export default function AuthLayout({
   children,
 }: {
@@ -83,18 +81,15 @@ export default function AuthLayout({
 }) {
   return (
     <div className="min-h-screen grid grid-cols-1 lg:grid-cols-2">
-      {/* Left Side: The form will be injected here via {children} */}
       <div className="flex flex-col items-center justify-center p-6 sm:p-12">
         <div className="w-full max-w-md">
           <Link href="/" className="flex items-center gap-2 mb-8 self-start">
-            {/* <Image src="/hamonix-logo.svg" alt="Hamonix Logo" width={40} height={40} /> */}
             <span className="text-2xl font-bold text-white">Hamonix</span>
           </Link>
           {children}
         </div>
       </div>
 
-      {/* Right Side: The static marketing panel */}
       <MarketingPanel />
     </div>
   );

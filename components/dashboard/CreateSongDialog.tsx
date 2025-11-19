@@ -68,7 +68,7 @@ export function CreateSongDialog() {
       genre,
       mood,
       vocalFile: file,
-      artistName: "Your Artist Name", // TODO: Get this from a user profile or add an input field
+      artistName: "Your Artist Name",
     });
 
     router.push(`/production/${newSongId}`);
