@@ -34,7 +34,6 @@ export const SongCard = ({ song, onDelete }: SongCardProps) => {
       aria-label={`View details for ${song.title}`}
     >
       <div className="bg-[#1e2936]/50 border border-gray-800 rounded-2xl overflow-hidden hover:bg-[#1e2936] hover:border-yellow-500/50 transition-all duration-300 shadow-lg hover:shadow-2xl hover:shadow-yellow-500/10 relative">
-        
         {/* Delete Button */}
         <button
           onClick={handleDelete}
@@ -68,7 +67,9 @@ export const SongCard = ({ song, onDelete }: SongCardProps) => {
               <h3 className="text-xl font-bold text-white truncate mb-1">
                 {song.title}
               </h3>
-              <p className="text-sm text-gray-400">by {song.artist_name} <b>Brandon237</b></p>
+              <p className="text-sm text-gray-400">
+                by {song.artist_name} <b>Brandon237</b>
+              </p>
             </div>
             <div className="flex items-center gap-2 flex-shrink-0">
               <ShareButton
@@ -76,7 +77,7 @@ export const SongCard = ({ song, onDelete }: SongCardProps) => {
                 songTitle={song.title}
                 artistName={song.artist_name}
               />
-              <Mic className="h-5 w-5 text-gray-500" title="Vocal Track" />
+              <Mic className="h-5 w-5 text-gray-500" />
             </div>
           </div>
 
@@ -85,7 +86,9 @@ export const SongCard = ({ song, onDelete }: SongCardProps) => {
           </div>
 
           <div className="flex justify-between items-center border-t border-gray-700/50 pt-4">
-            <span className="text-sm text-gray-400 font-medium">View release details</span>
+            <span className="text-sm text-gray-400 font-medium">
+              View release details
+            </span>
             <ArrowRight className="h-5 w-5 text-gray-500 group-hover:text-yellow-500 group-hover:translate-x-1 transition-all duration-300" />
           </div>
         </div>

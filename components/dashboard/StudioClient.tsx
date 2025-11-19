@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { SongCard } from "./SongCard";
-import { DashboardControls } from "./DashboardControls";
+
 import { createClient } from "@/lib/supabase/client";
 
 // Use a more specific type if you have one
@@ -56,10 +56,10 @@ export const StudioClient = ({ initialSongs }: { initialSongs: Song[] }) => {
 
   return (
     <div>
-      <DashboardControls
+      {/* <DashboardControls
         onSearchChange={setSearchQuery}
         onStatusChange={setStatusFilter}
-      />
+      /> */}
 
       {filteredSongs.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">

@@ -1,15 +1,15 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { Share2, X } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { useState } from "react";
+import { Share2, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogDescription,
-} from '@/components/ui/dialog'
+} from "@/components/ui/dialog";
 import {
   FacebookShareButton,
   TwitterShareButton,
@@ -21,41 +21,47 @@ import {
   WhatsappIcon,
   TelegramIcon,
   LinkedinIcon,
-} from 'react-share'
+} from "react-share";
 
 interface ShareButtonProps {
-  songId: string
-  songTitle: string
-  artistName: string
+  songId: string;
+  songTitle: string;
+  artistName: string;
 }
 
-export function ShareButton({ songId, songTitle, artistName }: ShareButtonProps) {
-  const [open, setOpen] = useState(false)
+export function ShareButton({
+  songId,
+  songTitle,
+  artistName,
+}: ShareButtonProps) {
+  const [open, setOpen] = useState(false);
 
   // Create the shareable URL
   // In production, this should be your actual domain
-  const shareUrl = `${typeof window !== 'undefined' ? window.location.origin : ''}/dashboard/songs/${songId}`
-  
+  const shareUrl = `${
+    typeof window !== "undefined" ? window.location.origin : ""
+  }/dashboard/songs/${songId}`;
+
   // Craft an engaging share message
-  const shareTitle = `🎵 Check out "${songTitle}" by ${artistName}`
-  const shareDescription = `Listen to my new track "${songTitle}" produced with AI on Hamonix Studio! 🔥🎶`
+  const shareTitle = `🎵 Check out "${songTitle}" by ${artistName}`;
+  const shareDescription = `Listen to my new track "${songTitle}" produced with AI on Hamonix Studio! 🔥🎶`;
 
   // Handle copy to clipboard
   const handleCopyLink = async () => {
     try {
-      await navigator.clipboard.writeText(shareUrl)
-      alert('Link copied to clipboard!')
+      await navigator.clipboard.writeText(shareUrl);
+      alert("Link copied to clipboard!");
     } catch (err) {
-      console.error('Failed to copy:', err)
+      console.error("Failed to copy:", err);
     }
-  }
+  };
 
   // Stop event propagation to prevent navigation when clicking share button
   const handleShareClick = (e: React.MouseEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
-    setOpen(true)
-  }
+    e.preventDefault();
+    e.stopPropagation();
+    setOpen(true);
+  };
 
   return (
     <>
@@ -72,7 +78,9 @@ export function ShareButton({ songId, songTitle, artistName }: ShareButtonProps)
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-md bg-gray-800 border-gray-700">
           <DialogHeader>
-            <DialogTitle className="text-xl font-bold">Share Your Track</DialogTitle>
+            <DialogTitle className="text-xl font-bold">
+              Share Your Track
+            </DialogTitle>
             <DialogDescription className="text-gray-400">
               Share "{songTitle}" with your fans and followers
             </DialogDescription>
@@ -81,11 +89,13 @@ export function ShareButton({ songId, songTitle, artistName }: ShareButtonProps)
           <div className="space-y-6 py-4">
             {/* Social Media Share Buttons */}
             <div>
-              <h3 className="text-sm font-medium mb-3 text-gray-300">Share on Social Media</h3>
+              <h3 className="text-sm font-medium mb-3 text-gray-300">
+                Share on Social Media
+              </h3>
               <div className="flex gap-3 flex-wrap">
                 <FacebookShareButton
                   url={shareUrl}
-                  quote={shareDescription}
+                  // quote={shareDescription}
                   hashtag="#HamonixStudio"
                 >
                   <FacebookIcon size={48} round />
@@ -94,7 +104,7 @@ export function ShareButton({ songId, songTitle, artistName }: ShareButtonProps)
                 <TwitterShareButton
                   url={shareUrl}
                   title={shareTitle}
-                  hashtags={['HamonixStudio', 'NewMusic', 'AIMusic']}
+                  hashtags={["HamonixStudio", "NewMusic", "AIMusic"]}
                 >
                   <TwitterIcon size={48} round />
                 </TwitterShareButton>
@@ -107,10 +117,7 @@ export function ShareButton({ songId, songTitle, artistName }: ShareButtonProps)
                   <WhatsappIcon size={48} round />
                 </WhatsappShareButton>
 
-                <TelegramShareButton
-                  url={shareUrl}
-                  title={shareTitle}
-                >
+                <TelegramShareButton url={shareUrl} title={shareTitle}>
                   <TelegramIcon size={48} round />
                 </TelegramShareButton>
 
@@ -126,7 +133,9 @@ export function ShareButton({ songId, songTitle, artistName }: ShareButtonProps)
 
             {/* Copy Link Section */}
             <div>
-              <h3 className="text-sm font-medium mb-3 text-gray-300">Or Copy Link</h3>
+              <h3 className="text-sm font-medium mb-3 text-gray-300">
+                Or Copy Link
+              </h3>
               <div className="flex gap-2">
                 <input
                   type="text"
@@ -145,7 +154,9 @@ export function ShareButton({ songId, songTitle, artistName }: ShareButtonProps)
 
             {/* Share Tips */}
             <div className="bg-gray-900/50 border border-gray-700 rounded-lg p-4">
-              <h4 className="text-sm font-semibold mb-2 text-yellow-400">💡 Tips for Going Viral</h4>
+              <h4 className="text-sm font-semibold mb-2 text-yellow-400">
+                💡 Tips for Going Viral
+              </h4>
               <ul className="text-xs text-gray-400 space-y-1">
                 <li>• Share during peak hours (6-9 PM local time)</li>
                 <li>• Use trending hashtags in your niche</li>
@@ -158,5 +169,5 @@ export function ShareButton({ songId, songTitle, artistName }: ShareButtonProps)
         </DialogContent>
       </Dialog>
     </>
-  )
+  );
 }

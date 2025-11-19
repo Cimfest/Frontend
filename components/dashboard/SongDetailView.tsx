@@ -62,38 +62,38 @@ export function SongDetailView({ id }: { id: string }) {
           {/* NOTE: These props probably need to be fixed based on your Song type */}
           {/* I'm commenting them out as they don't exist on your defined Song interface */}
           {/* You'll need to add them to the interface in lib/utils.ts */}
-          <AudioPlayer
+          {/* <AudioPlayer
             title="Your Original Vocal"
             // duration={song.duration}
             // quality={song.original_vocal.quality}
             // format={song.original_vocal.format}
             // downloadUrl={song.original_vocal.url}
             isReady={true}
-          />
-          <AudioPlayer
+          /> */}
+          {/* <AudioPlayer
             title="AI-Generated Full Track"
             // duration={song.duration}
             // downloadUrl={song.generated_track.url}
             isGenerated={true}
             isReady={isTrackReady}
-          />
+          /> */}
         </div>
 
         <div className="space-y-6">
-          <TrackInformation
+          {/* <TrackInformation
             // duration={song.duration}
             genre={song.genre}
             mood={song.mood}
             // bpm={song.bpm}
             // key={song.key}
             created={song.createdAt}
-          />
-          <AIAnalysis
+          /> */}
+          {/* <AIAnalysis
           // vocalQuality={song.ai_analysis.vocal_quality}
           // pitchAccuracy={song.ai_analysis.pitch_accuracy}
           // rhythmSync={song.ai_analysis.rhythm_sync}
           />
-          <QuickActions />
+          <QuickActions /> */}
         </div>
       </div>
     </div>

@@ -1,11 +1,8 @@
 import { NextResponse } from "next/server";
 import { HfInference } from "@huggingface/inference";
 
-// Initialize the Hugging Face client
 const hf = new HfInference(process.env.HUGGINGFACE_API_KEY);
 
-// --- 1. REFINED SYSTEM PROMPTS ---
-// These prompts establish a more professional and expert persona for the AI.
 const SYSTEM_PROMPTS = {
   biography: `You are an elite music journalist for a publication like Rolling Stone. Your writing is evocative, professional, and captures the artist's core essence. Your primary goal is to create compelling narratives that resonate with industry professionals. You will ALWAYS use 'Brandon237' as the artist name in the output when requested.`,
   pressRelease: `You are a senior PR agent at a major record label. Your press releases are professional, newsworthy, and adhere strictly to industry-standard formatting. Your tone is formal and authoritative. You will use 'Brandon237' as the artist name when requested.`,
@@ -104,14 +101,11 @@ export async function POST(request: Request) {
           temperature: 0.8,
         }),
         hf.textToImage({
-          model: "black-forest-labs/FLUX.1-schnell", // A great choice for speed and quality
+          model: "black-forest-labs/FLUX.1-schnell",
           inputs: albumArtPrompt,
         }),
       ]);
 
-    // --- Processing Logic (Your existing logic is excellent, no changes needed here) ---
-
-    // Extract biography with better error handling and ensure it starts with Brandon237
     let biography = "Unable to generate biography at this time.";
     if (bioResult.status === "fulfilled") {
       const content = bioResult.value.choices[0].message.content;
@@ -140,7 +134,6 @@ export async function POST(request: Request) {
       } ${genre} Journey\n\nCameroonian artist Brandon237 today unveiled their latest single "${title}", a captivating ${genre} track that masterfully blends traditional African rhythms with contemporary production. The ${mood} atmosphere of the track showcases Brandon237's ability to honor cultural heritage while innovating for modern audiences.\n\n"${title}" is now available on all major streaming platforms and is available for licensing.\n\nContact: press@brandon237.com`;
     }
 
-    // Extract social media blurbs
     let socialBlurbs: string[] = [];
     if (socialResult.status === "fulfilled") {
       try {
@@ -171,14 +164,11 @@ export async function POST(request: Request) {
       ];
     }
 
-    // Convert image blob to base64
     let artDataUrl = "";
     if (artResult.status === "fulfilled") {
       try {
-        // --- FIX IS HERE ---
-        // We are asserting that 'artResult.value' is a Blob.
-        const arrayBuffer = await (artResult.value as Blob).arrayBuffer();
-
+        const blob = artResult.value as unknown as Blob;
+        const arrayBuffer = await blob.arrayBuffer();
         const buffer = Buffer.from(arrayBuffer);
         artDataUrl = `data:image/png;base64,${buffer.toString("base64")}`;
       } catch (error) {

@@ -63,12 +63,12 @@ export function CreateSongDialog() {
 
     const newSongId = uuidv4();
 
-    setSongDetails({
-      title: songTitle,
-      genre,
-      mood,
-      vocalFile: file,
-    });
+    // setSongDetails({
+    //   title: songTitle,
+    //   genre,
+    //   mood,
+    //   vocalFile: file,
+    // });
 
     router.push(`/production/${newSongId}`);
   };
