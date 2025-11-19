@@ -63,12 +63,13 @@ export function CreateSongDialog() {
 
     const newSongId = uuidv4();
 
-    // setSongDetails({
-    //   title: songTitle,
-    //   genre,
-    //   mood,
-    //   vocalFile: file,
-    // });
+    setSongDetails({
+      title: songTitle,
+      genre,
+      mood,
+      vocalFile: file,
+      artistName: "Your Artist Name", // TODO: Get this from a user profile or add an input field
+    });
 
     router.push(`/production/${newSongId}`);
   };
