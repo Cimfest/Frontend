@@ -1,4 +1,3 @@
-// KEY CHANGE: This is now a Client Component to access localStorage
 "use client";
 
 import { useState, useEffect } from "react";
@@ -7,10 +6,9 @@ import Link from "next/link";
 import { Plus, Info, Loader2 } from "lucide-react";
 import { SongCard } from "@/components/dashboard/SongCard";
 import { getUserProfile } from "@/app/actions/user-actions";
-// KEY CHANGE: We now use this as a fallback for the first load
 import { getAllSongs as getInitialSongs } from "@/lib/data/dummy-songs";
+import { getRandomPlaceholderImage } from "@/lib/placeholder-images";
 
-// Define a type for the profile for better type safety
 interface UserProfile {
   artist_name: string;
   email: string;
@@ -18,13 +16,22 @@ interface UserProfile {
   last_name: string;
 }
 
+interface Song {
+  id: string;
+  title: string;
+  artist_name: string;
+  status: "Completed" | "Processing" | "Failed" | "Pending";
+  albumArt?: string | null;
+  genre?: string;
+  mood?: string;
+  createdAt?: string;
+}
+
 export default function DashboardPage() {
-  // KEY CHANGE: We use state to hold data fetched on the client
   const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [songs, setSongs] = useState([]);
+  const [songs, setSongs] = useState<Song[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // KEY CHANGE: We fetch all data in a useEffect hook
   useEffect(() => {
     async function loadDashboardData() {
       // Fetch user profile
@@ -33,12 +40,28 @@ export default function DashboardPage() {
 
       // Fetch songs from localStorage
       const storedSongs = localStorage.getItem("allSongs");
+      
+      let parsedSongs: Song[] = [];
+      
       if (storedSongs) {
-        setSongs(JSON.parse(storedSongs));
+        parsedSongs = JSON.parse(storedSongs);
+        console.log("Loaded songs from localStorage:", parsedSongs);
+        
+        // Add random placeholder images to ALL songs
+        parsedSongs = parsedSongs.map(song => ({
+          ...song,
+          albumArt: song.albumArt || getRandomPlaceholderImage()
+        }));
+        
+        console.log("Songs with album art:", parsedSongs);
+        setSongs(parsedSongs);
       } else {
-        // If nothing in localStorage, this is the first visit.
-        // Load the initial dummy songs and save them.
-        const initialSongs = getInitialSongs();
+        // If nothing in localStorage, load initial dummy songs with placeholder images
+        const initialSongs = getInitialSongs().map(song => ({
+          ...song,
+          albumArt: getRandomPlaceholderImage()
+        }));
+        console.log("Initial songs with album art:", initialSongs);
         setSongs(initialSongs);
         localStorage.setItem("allSongs", JSON.stringify(initialSongs));
       }
@@ -47,7 +70,50 @@ export default function DashboardPage() {
     }
 
     loadDashboardData();
-  }, []); // Empty dependency array means this runs once on component mount
+  }, []);
+
+  // Function to handle song deletion
+  const handleDeleteSong = (songId: string) => {
+    if (confirm("Are you sure you want to delete this song? This action cannot be undone.")) {
+      // Filter out the song to be deleted
+      const updatedSongs = songs.filter(song => song.id !== songId);
+      
+      // Update state
+      setSongs(updatedSongs);
+      
+      // Update localStorage
+      localStorage.setItem("allSongs", JSON.stringify(updatedSongs));
+      
+      console.log(`Song ${songId} deleted`);
+    }
+  };
+
+  // Listen for storage changes
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const storedSongs = localStorage.getItem("allSongs");
+      
+      if (storedSongs) {
+        let parsedSongs = JSON.parse(storedSongs);
+        
+        // Add random placeholder images to songs that don't have album art
+        parsedSongs = parsedSongs.map((song: Song) => ({
+          ...song,
+          albumArt: song.albumArt || getRandomPlaceholderImage()
+        }));
+        
+        setSongs(parsedSongs);
+      }
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    window.addEventListener("focus", handleStorageChange);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener("focus", handleStorageChange);
+    };
+  }, []);
 
   if (isLoading || !profile) {
     return (
@@ -104,7 +170,11 @@ export default function DashboardPage() {
       {songs && songs.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {songs.map((song) => (
-            <SongCard key={song.id} song={song} />
+            <SongCard 
+              key={song.id} 
+              song={song} 
+              onDelete={handleDeleteSong}
+            />
           ))}
         </div>
       ) : (

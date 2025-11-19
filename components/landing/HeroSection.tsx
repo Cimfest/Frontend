@@ -22,7 +22,7 @@ export default function HeroSection() {
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
             <Button asChild size="lg" className="text-lg px-8">
-              <Link href="/Login">Start Creating Now</Link>
+              <Link href="/dashboard">Start Creating Now</Link>
             </Button>
             <Button asChild variant="outline" size="lg" className="text-lg px-8 border-primary text-primary hover:bg-primary hover:text-primary-foreground">
               <Link href="#demo">Watch Demo</Link>

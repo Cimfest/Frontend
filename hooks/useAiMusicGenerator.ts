@@ -22,94 +22,89 @@ const CAMEROON_RHYTHMS = {
   bikutsi: {
     defaultBpm: 160,
     timeSignature: "6/8",
-    // Fast, syncopated 6/8 pattern - characteristic Bikutsi groove
     kickPattern: [
       "C1",
       null,
       null,
       "C1",
       null,
-      null, // Bar 1
+      null,
+      "C1",
+      null,
+      null,
+      null,
+      null,
+      "C1",
+      "C1",
+      null,
+      null,
       "C1",
       null,
       null,
       null,
       null,
-      "C1", // Bar 2
       "C1",
       null,
       null,
       "C1",
-      null,
-      null, // Bar 3
-      null,
-      null,
-      "C1",
-      null,
-      null,
-      "C1", // Bar 4
     ],
-    // Bikutsi snare: emphasizes the polyrhythm
     snarePattern: [
       null,
       null,
       "D1",
       null,
       null,
-      "D1", // Bar 1
-      null,
       "D1",
       null,
-      null,
       "D1",
-      null, // Bar 2
       null,
       null,
       "D1",
       null,
       null,
-      "D1", // Bar 3
+      null,
+      "D1",
+      null,
       null,
       "D1",
       null,
       "D1",
       null,
-      null, // Bar 4
+      "D1",
+      null,
+      null,
     ],
-    // Fast hi-hat pattern characteristic of Bikutsi
     hihatPattern: [
       "E1",
       null,
       "E1",
       "E1",
       null,
-      "E1", // Bar 1
       "E1",
       "E1",
-      null,
-      "E1",
-      "E1",
-      null, // Bar 2
       "E1",
       null,
       "E1",
       "E1",
       null,
-      "E1", // Bar 3
+      "E1",
+      null,
       "E1",
       "E1",
       null,
       "E1",
       "E1",
-      "E1", // Bar 4
+      "E1",
+      null,
+      "E1",
+      "E1",
+      "E1",
     ],
     description: "Fast syncopated 6/8 rhythm with polyrhythmic layers",
   },
-
   makossa: {
     defaultBpm: 130,
     timeSignature: "4/4",
-    // Makossa's signature groove - emphasis on 2 and 4 with African swing
     kickPattern: [
       "C1",
       null,
@@ -118,23 +113,13 @@ const CAMEROON_RHYTHMS = {
       "C1",
       null,
       null,
-      null, // Bar 1
-      "C1",
-      null,
       null,
       "C1",
       null,
       null,
       "C1",
-      null, // Bar 2
-      "C1",
       null,
       null,
-      null,
-      "C1",
-      null,
-      null,
-      null, // Bar 3
       "C1",
       null,
       "C1",
@@ -142,9 +127,18 @@ const CAMEROON_RHYTHMS = {
       null,
       null,
       "C1",
-      null, // Bar 4
+      null,
+      null,
+      null,
+      "C1",
+      null,
+      "C1",
+      null,
+      null,
+      null,
+      "C1",
+      null,
     ],
-    // Classic Makossa snare pattern
     snarePattern: [
       null,
       null,
@@ -153,15 +147,7 @@ const CAMEROON_RHYTHMS = {
       "D1",
       null,
       null,
-      null, // Bar 1
       null,
-      null,
-      null,
-      null,
-      "D1",
-      null,
-      null,
-      "D1", // Bar 2
       null,
       null,
       null,
@@ -169,7 +155,15 @@ const CAMEROON_RHYTHMS = {
       "D1",
       null,
       null,
-      null, // Bar 3
+      "D1",
+      null,
+      null,
+      null,
+      null,
+      "D1",
+      null,
+      null,
+      null,
       null,
       null,
       null,
@@ -177,9 +171,8 @@ const CAMEROON_RHYTHMS = {
       "D1",
       null,
       null,
-      null, // Bar 4
+      null,
     ],
-    // Makossa hi-hat with swing feel
     hihatPattern: [
       "E1",
       null,
@@ -188,23 +181,20 @@ const CAMEROON_RHYTHMS = {
       null,
       "E1",
       "E1",
-      null, // Bar 1
-      "E1",
-      "E1",
-      null,
-      "E1",
       null,
       "E1",
       "E1",
-      null, // Bar 2
+      null,
       "E1",
       null,
       "E1",
       "E1",
       null,
       "E1",
+      null,
       "E1",
-      null, // Bar 3
+      "E1",
+      null,
       "E1",
       "E1",
       null,
@@ -212,15 +202,16 @@ const CAMEROON_RHYTHMS = {
       "E1",
       null,
       "E1",
-      "E1", // Bar 4
+      "E1",
+      null,
+      "E1",
+      "E1",
     ],
     description: "Groove-heavy 4/4 with African swing and syncopation",
   },
-
   mbole: {
     defaultBpm: 120,
     timeSignature: "12/8",
-    // Mbolé traditional pattern - talking drum conversation style
     kickPattern: [
       "C1",
       null,
@@ -233,10 +224,6 @@ const CAMEROON_RHYTHMS = {
       "C1",
       null,
       null,
-      null, // Bar 1
-      "C1",
-      null,
-      null,
       null,
       "C1",
       null,
@@ -245,9 +232,12 @@ const CAMEROON_RHYTHMS = {
       "C1",
       null,
       null,
-      null, // Bar 2
+      null,
+      "C1",
+      null,
+      null,
+      null,
     ],
-    // Mbolé snare mimics call-and-response
     snarePattern: [
       null,
       null,
@@ -260,21 +250,20 @@ const CAMEROON_RHYTHMS = {
       null,
       null,
       "D1",
-      null, // Bar 1
       null,
-      "D1",
-      null,
-      null,
-      "D1",
       null,
       "D1",
       null,
       null,
       "D1",
       null,
-      null, // Bar 2
+      "D1",
+      null,
+      null,
+      "D1",
+      null,
+      null,
     ],
-    // Traditional African hi-hat pattern
     hihatPattern: [
       "E1",
       "E1",
@@ -287,27 +276,25 @@ const CAMEROON_RHYTHMS = {
       "E1",
       "E1",
       null,
-      "E1", // Bar 1
       "E1",
-      null,
-      "E1",
-      "E1",
-      null,
       "E1",
       null,
       "E1",
       "E1",
       null,
       "E1",
-      "E1", // Bar 2
+      null,
+      "E1",
+      "E1",
+      null,
+      "E1",
+      "E1",
     ],
     description: "Traditional 12/8 with call-and-response drum conversation",
   },
-
   afrobeats: {
     defaultBpm: 116,
     timeSignature: "4/4",
-    // Modern Afrobeats pattern (for comparison)
     kickPattern: [
       "C1",
       null,
@@ -419,10 +406,14 @@ export function useAiMusicGenerator() {
   const [progress, setProgress] = useState(0);
   const [isReady, setIsReady] = useState(false);
   const [isReadyToPlay, setIsReadyToPlay] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
   const [generatedAudio, setGeneratedAudio] = useState<any[]>([]);
+  const [audioUrl, setAudioUrl] = useState<string | null>(null);
 
   const musicRnnRef = useRef<MusicRNN | null>(null);
   const isInitializing = useRef(false);
+  const recorderRef = useRef<MediaRecorder | null>(null);
+  const recordedChunksRef = useRef<Blob[]>([]);
 
   useEffect(() => {
     async function loadModels() {
@@ -463,9 +454,20 @@ export function useAiMusicGenerator() {
     loadModels();
   }, []);
 
-  /**
-   * Detects tempo from vocal track
-   */
+  // Monitor Tone.js Transport state
+  useEffect(() => {
+    const checkPlayState = () => {
+      if (Tone.Transport.state === "started") {
+        setIsPlaying(true);
+      } else {
+        setIsPlaying(false);
+      }
+    };
+
+    const interval = setInterval(checkPlayState, 100);
+    return () => clearInterval(interval);
+  }, []);
+
   const detectVocalTempo = useCallback(
     async (audioBuffer: AudioBuffer): Promise<number> => {
       console.log("🎼 Detecting vocal tempo...");
@@ -473,7 +475,6 @@ export function useAiMusicGenerator() {
       const channelData = audioBuffer.getChannelData(0);
       const sampleRate = audioBuffer.sampleRate;
 
-      // Simple onset detection
       const windowSize = Math.floor(sampleRate * 0.05);
       const hopSize = Math.floor(windowSize / 2);
       const energies: number[] = [];
@@ -486,7 +487,6 @@ export function useAiMusicGenerator() {
         energies.push(Math.sqrt(energy / windowSize));
       }
 
-      // Find peaks
       const threshold =
         (energies.reduce((a, b) => a + b, 0) / energies.length) * 1.5;
       const onsets: number[] = [];
@@ -503,21 +503,18 @@ export function useAiMusicGenerator() {
 
       if (onsets.length < 2) {
         console.warn("⚠️ Could not detect tempo, using genre default");
-        return 0; // Will use genre default
+        return 0;
       }
 
-      // Calculate intervals
       const intervals: number[] = [];
       for (let i = 1; i < onsets.length; i++) {
         intervals.push(onsets[i] - onsets[i - 1]);
       }
 
-      // Get median interval
       intervals.sort((a, b) => a - b);
       const medianInterval = intervals[Math.floor(intervals.length / 2)];
       const bpm = Math.round(60 / medianInterval);
 
-      // Ensure reasonable range
       let adjustedBpm = bpm;
       if (bpm < 60) adjustedBpm = bpm * 2;
       if (bpm > 200) adjustedBpm = bpm / 2;
@@ -528,9 +525,6 @@ export function useAiMusicGenerator() {
     []
   );
 
-  /**
-   * Gets the authentic rhythm pattern for the genre
-   */
   const getGenreRhythm = useCallback(
     (genre: string): typeof CAMEROON_RHYTHMS.bikutsi => {
       const normalizedGenre = genre.toLowerCase();
@@ -539,15 +533,11 @@ export function useAiMusicGenerator() {
           normalizedGenre as keyof typeof CAMEROON_RHYTHMS
         ];
       }
-      // Default to afrobeats if genre not found
       return CAMEROON_RHYTHMS.afrobeats;
     },
     []
   );
 
-  /**
-   * Expands short pattern to full 64-step pattern with variations
-   */
   const expandPattern = useCallback(
     (
       shortPattern: (string | null)[],
@@ -559,11 +549,9 @@ export function useAiMusicGenerator() {
 
       for (let rep = 0; rep < repetitions; rep++) {
         for (let i = 0; i < patternLength && fullPattern.length < 64; i++) {
-          // Add variation every other repetition
           if (rep % 2 === 1 && Math.random() > 0.7) {
-            // Occasionally skip or add a hit for variation
             if (shortPattern[i] && Math.random() > 0.5) {
-              fullPattern.push(null); // Skip this hit
+              fullPattern.push(null);
             } else if (!shortPattern[i] && Math.random() > 0.8) {
               fullPattern.push(
                 shortPattern[Math.floor(Math.random() * patternLength)] || null
@@ -582,13 +570,10 @@ export function useAiMusicGenerator() {
     []
   );
 
-  /**
-   * Analyzes vocal energy to adjust pattern intensity
-   */
   const analyzeVocalIntensity = useCallback(
     (audioBuffer: AudioBuffer): number[] => {
       const channelData = audioBuffer.getChannelData(0);
-      const segmentSize = Math.floor(channelData.length / 16); // 16 segments
+      const segmentSize = Math.floor(channelData.length / 16);
       const intensities: number[] = [];
 
       for (let i = 0; i < 16; i++) {
@@ -603,12 +588,51 @@ export function useAiMusicGenerator() {
         intensities.push(Math.sqrt(rms / (end - start)));
       }
 
-      // Normalize
       const max = Math.max(...intensities);
       return intensities.map((i) => (max > 0 ? i / max : 0));
     },
     []
   );
+
+  const startRecording = useCallback(async () => {
+    try {
+      const dest = Tone.getDestination();
+      const stream = (
+        dest as any
+      ).context.rawContext.createMediaStreamDestination().stream;
+
+      recordedChunksRef.current = [];
+      const recorder = new MediaRecorder(stream, { mimeType: "audio/webm" });
+
+      recorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          recordedChunksRef.current.push(event.data);
+        }
+      };
+
+      recorder.onstop = () => {
+        const blob = new Blob(recordedChunksRef.current, {
+          type: "audio/webm",
+        });
+        const url = URL.createObjectURL(blob);
+        setAudioUrl(url);
+        console.log("🎵 Audio recording saved:", url);
+      };
+
+      recorderRef.current = recorder;
+      recorder.start();
+      console.log("🔴 Started recording...");
+    } catch (error) {
+      console.error("Failed to start recording:", error);
+    }
+  }, []);
+
+  const stopRecording = useCallback(() => {
+    if (recorderRef.current && recorderRef.current.state !== "inactive") {
+      recorderRef.current.stop();
+      console.log("⏹️ Stopped recording");
+    }
+  }, []);
 
   const cleanup = useCallback(() => {
     try {
@@ -621,6 +645,7 @@ export function useAiMusicGenerator() {
       });
       setGeneratedAudio([]);
       setIsReadyToPlay(false);
+      setIsPlaying(false);
     } catch (error) {
       console.error("Cleanup error:", error);
     }
@@ -638,13 +663,11 @@ export function useAiMusicGenerator() {
       try {
         console.log(`🎬 Starting ${genre.toUpperCase()} production...`);
 
-        // Get authentic rhythm for this genre
         const genreRhythm = getGenreRhythm(genre);
         console.log(
           `🥁 Using authentic ${genre} rhythm: ${genreRhythm.description}`
         );
 
-        // Stage 1: Analyze vocals
         setStatus(`Analyzing vocals for ${genre} production...`);
         setProgress(10);
 
@@ -671,35 +694,29 @@ export function useAiMusicGenerator() {
 
         const intensities = analyzeVocalIntensity(audioBuffer);
 
-        // Stage 2: Create authentic Cameroonian rhythm pattern
         setStatus(`Creating authentic ${genre} rhythm...`);
         setProgress(50);
 
-        // Expand genre-specific patterns to full 64 steps
         const kickPattern = expandPattern(genreRhythm.kickPattern);
         const snarePattern = expandPattern(genreRhythm.snarePattern);
         const hihatPattern = expandPattern(genreRhythm.hihatPattern);
 
-        // Adjust pattern density based on vocal intensity
         const adaptedPattern: AiPattern = {
           kick: kickPattern.map((hit, i) => {
-            const section = Math.floor(i / 4); // Which of 16 sections
+            const section = Math.floor(i / 4);
             const intensity = intensities[section] || 0.5;
-            // Keep hits during high intensity, sometimes remove during low
             if (hit && intensity < 0.3 && Math.random() > 0.7) return null;
             return hit;
           }),
           snare: snarePattern.map((hit, i) => {
             const section = Math.floor(i / 4);
             const intensity = intensities[section] || 0.5;
-            // Add extra snares during high intensity
             if (!hit && intensity > 0.8 && Math.random() > 0.85) return "D1";
             return hit;
           }),
           hihat: hihatPattern,
         };
 
-        // Stage 3: Create instruments
         setStatus("Loading authentic drum sounds...");
         setProgress(65);
 
@@ -720,7 +737,6 @@ export function useAiMusicGenerator() {
 
         const vocalPlayer = new Tone.Player(vocalFileURL).toDestination();
 
-        // Bass line appropriate for the genre
         const bassSynth = new Tone.MonoSynth({
           oscillator: { type: "sawtooth" },
           envelope: {
@@ -730,18 +746,15 @@ export function useAiMusicGenerator() {
         }).toDestination();
         bassSynth.volume.value = -8;
 
-        // Atmospheric synth
         const padSynth = new Tone.PolySynth(Tone.Synth, {
           oscillator: { type: "triangle" },
           envelope: { attack: 0.5, release: 2 },
         }).toDestination();
         padSynth.volume.value = -16;
 
-        // Stage 4: Arrange with genre-specific patterns
         setStatus(`Arranging ${genre} track...`);
         setProgress(80);
 
-        // African-influenced chord progressions
         const progressions = {
           C_Major: {
             chords: [
@@ -755,23 +768,10 @@ export function useAiMusicGenerator() {
               { time: "3:0", note: "F2" },
             ],
           },
-          G_Major: {
-            chords: [
-              { time: "0:0", notes: ["G3", "B3", "D4", "G4"] },
-              { time: "2:0", notes: ["C3", "E3", "G3", "C4"] },
-            ],
-            bass: [
-              { time: "0:0", note: "G2" },
-              { time: "1:0", note: "G2" },
-              { time: "2:0", note: "C2" },
-              { time: "3:0", note: "C2" },
-            ],
-          },
         };
 
         const selectedProgression = progressions.C_Major;
 
-        // Create sequences with authentic patterns
         const kickSeq = new Tone.Sequence(
           (time, note) => {
             if (note) drumSampler.triggerAttack(note, time, 0.9);
@@ -808,7 +808,6 @@ export function useAiMusicGenerator() {
         padPart.loop = 32;
         padPart.loopEnd = "4m";
 
-        // Final stage
         setStatus("Finalizing production...");
         setProgress(95);
 
@@ -859,10 +858,29 @@ export function useAiMusicGenerator() {
     if (isReadyToPlay) {
       try {
         await Tone.start();
+
+        // Start recording when playback starts
+        if (!audioUrl) {
+          await startRecording();
+        }
+
         Tone.Transport.start();
+        setIsPlaying(true);
         console.log("▶️ Playback started");
       } catch (error) {
         console.error("Play error:", error);
+      }
+    }
+  };
+
+  const pause = () => {
+    if (isReadyToPlay && isPlaying) {
+      try {
+        Tone.Transport.pause();
+        setIsPlaying(false);
+        console.log("⏸️ Playback paused");
+      } catch (error) {
+        console.error("Pause error:", error);
       }
     }
   };
@@ -872,6 +890,11 @@ export function useAiMusicGenerator() {
       try {
         Tone.Transport.stop();
         Tone.Transport.position = 0;
+        setIsPlaying(false);
+
+        // Stop recording when playback stops
+        stopRecording();
+
         console.log("⏹️ Playback stopped");
       } catch (error) {
         console.error("Stop error:", error);
@@ -879,5 +902,20 @@ export function useAiMusicGenerator() {
     }
   };
 
-  return { status, progress, isReady, isReadyToPlay, generate, play, stop };
+  const getAudioUrl = useCallback(() => {
+    return audioUrl;
+  }, [audioUrl]);
+
+  return {
+    status,
+    progress,
+    isReady,
+    isReadyToPlay,
+    isPlaying,
+    generate,
+    play,
+    pause,
+    stop,
+    getAudioUrl,
+  };
 }

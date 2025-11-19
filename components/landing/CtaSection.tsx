@@ -14,7 +14,7 @@ export default function CtaSection() {
             Start your journey today.
           </p>
           <Button asChild size="lg" variant="secondary" className="text-lg px-8">
-            <Link href="/Login">Start Creating Now</Link>
+            <Link href="/dashboard">Start Creating Now</Link>
           </Button>
         </div>
       </div>
