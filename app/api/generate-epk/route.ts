@@ -218,19 +218,17 @@ Cameroonian artist Brandon237 today unveiled their latest single "${title}", a c
 Contact: press@brandon237.com`;
     }
 
-    // Extract social media blurbs with improved parsing
     let socialBlurbs = [];
     if (socialResult.status === "fulfilled") {
       try {
         const socialText =
           socialResult.value.choices[0].message.content || "[]";
-        // More aggressive cleaning for JSON extraction
+
         let cleanedText = socialText
           .replace(/```json\n?|\n?```/g, "")
           .replace(/```\n?|\n?```/g, "")
           .trim();
 
-        // Try to find JSON array in the text
         const jsonMatch = cleanedText.match(/\[[\s\S]*\]/);
         if (jsonMatch) {
           cleanedText = jsonMatch[0];
@@ -238,7 +236,7 @@ Contact: press@brandon237.com`;
 
         const parsed = JSON.parse(cleanedText);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          socialBlurbs = parsed.slice(0, 3); // Ensure we only take 3 posts
+          socialBlurbs = parsed.slice(0, 3);
         }
       } catch (error) {
         console.error("Failed to parse social media JSON:", error);
@@ -261,12 +259,8 @@ Contact: press@brandon237.com`;
     let artDataUrl = "";
     if (artResult.status === "fulfilled") {
       try {
-        // --- THE FINAL FIX ---
-        // This double assertion is the correct way to force a type conversion
-        // when TypeScript is too strict. It will resolve the build error.
         const blob = artResult.value as unknown as Blob;
 
-        // Now that `blob` is correctly typed, we can call arrayBuffer() on it.
         const arrayBuffer = await blob.arrayBuffer();
         const buffer = Buffer.from(arrayBuffer);
         artDataUrl = `data:image/png;base64,${buffer.toString("base64")}`;

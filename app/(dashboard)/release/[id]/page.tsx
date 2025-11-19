@@ -301,9 +301,7 @@ export default function ReleaseDashboardPage() {
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-3">
               {songData.title}
             </h1>
-            <p className="text-xl text-gray-400 mb-4">
-              by {songData.artistName}
-            </p>
+            <p className="text-xl text-gray-400 mb-4">by Random127</p>
             <div className="flex items-center gap-2 mb-4">
               <span
                 className={`px-3 py-1 rounded-full text-xs font-semibold ${
