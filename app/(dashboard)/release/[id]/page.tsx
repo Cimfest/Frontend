@@ -26,9 +26,6 @@ import {
 import DSPExportModal from "@/components/DSPExportModal";
 import { Label } from "@radix-ui/react-label";
 
-// Note: If you have an actual audio file/URL from your backend, you can set it here
-// For demo purposes, we'll generate a simple tone
-// Interfaces
 interface SongData {
   id: string;
   title: string;
@@ -195,7 +192,6 @@ export default function ReleaseDashboardPage() {
     if (songData && distributionStatus === "ready") {
       setDistributionStatus("submitted");
 
-      // Update song status in localStorage
       const allSongsString = localStorage.getItem("allSongs");
       if (allSongsString) {
         const allSongs: SongData[] = JSON.parse(allSongsString);
@@ -207,7 +203,6 @@ export default function ReleaseDashboardPage() {
         }
       }
 
-      // Simulate moving to "live" after a delay (for demo purposes)
       setTimeout(() => {
         setDistributionStatus("live");
       }, 3000);
