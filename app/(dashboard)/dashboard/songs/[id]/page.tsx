@@ -1,32 +1,31 @@
-// This file remains a Server Component
+// ./app/(dashboard)/song/[id]/page.tsx
 
+// Import what you need. I'll assume you need this again:
 import { SongDetailView } from "@/components/dashboard/SongDetailView";
 
-// Define the type for the page props
+// 1. ADD THIS TYPE DEFINITION
+// This tells TypeScript the shape of the props for this page.
 type SongDetailPageProps = {
   params: {
-    id: string;
+    id: string; // The '[id]' in your folder name becomes a string property here
   };
 };
 
-// This function still runs on the server at build time, which is correct
+// This function can stay if you use generateStaticParams
 export async function generateStaticParams() {
-  // This is a bit of a problem. If your songs are ONLY in localStorage,
-  // the server has no way to know what IDs to generate pages for.
-  // For the build to pass, you must provide some static IDs here.
-  // The ones you have are fine for a demo.
-  return [
-    { id: "1" },
-    { id: "2" },
-    { id: "3" },
-    { id: "4" },
-    { id: "5" },
-    { id: "6" },
-  ];
+  // Remember: If your data is only in localStorage, the server doesn't
+  // know about it. You need to provide some placeholder IDs for the build to work.
+  return [{ id: "1" }, { id: "2" }, { id: "3" }];
 }
 
-// The page component is now very clean
+// 2. APPLY THE TYPE TO YOUR COMPONENT'S PROPS
 export default async function SongDetailPage({ params }: SongDetailPageProps) {
-  // We pass the 'id' from the server (params) to the client component as a prop
-  return <SongDetailView id={params.id} />;
+  // 3. REMOVE THE UNNECESSARY 'await'
+  // The line "const { id } = await params;" is incorrect.
+  // The line below is the correct way to get the id.
+  const { id } = params;
+
+  // Based on our previous fix, this page should render the client component
+  // and pass the `id` to it.
+  return <SongDetailView id={id} />;
 }
