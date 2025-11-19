@@ -175,7 +175,10 @@ export async function POST(request: Request) {
     let artDataUrl = "";
     if (artResult.status === "fulfilled") {
       try {
-        const arrayBuffer = await artResult.value.arrayBuffer();
+        // --- FIX IS HERE ---
+        // We are asserting that 'artResult.value' is a Blob.
+        const arrayBuffer = await (artResult.value as Blob).arrayBuffer();
+
         const buffer = Buffer.from(arrayBuffer);
         artDataUrl = `data:image/png;base64,${buffer.toString("base64")}`;
       } catch (error) {
